@@ -1,16 +1,33 @@
 
 all: print
 
-TIMESTAMP_DAY=$(shell date +%Y_%m_%d)
-TIMESTAMP_TIME=$(shell date +%H_%M_%S)
-USER_ID=$(shell id -u)
-USER_GROUP=$(shell id -g)
 PDK=sky130A
+DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:latest
+
 
 ifneq (,$(DOCKER_ROOT))
 _DOCKER_ROOT_USER=--user root
 endif
 
+ifeq (Windows_NT,$(OS))
+
+$(shell mkdir shared)
+USER_ID=1000
+USER_GROUP=1000
+DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
+	--mount type=bind,source=$(realpath ./shared),target=/home/designer/shared \
+	--net=host \
+	-e DISPLAY \
+	-e XDG_RUNTIME_DIR \
+	-e PULSE_SERVER \
+	-e USER_ID=$(USER_ID) \
+	-e USER_GROUP=$(USER_GROUP)
+
+else
+
+$(shell mkdir -p shared)
+USER_ID=$(shell id -u)
+USER_GROUP=$(shell id -g)
 DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
 	--mount type=bind,source=$(realpath ./shared),target=/home/designer/shared \
 	-v /tmp/.X11-unix:/tmp/.X11-unix:ro \
@@ -23,11 +40,7 @@ DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
 	-e USER_ID=$(USER_ID) \
 	-e USER_GROUP=$(USER_GROUP)
 
-
-DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:latest
-
-
-$(shell mkdir -p shared)
+endif
 
 
 ########################
@@ -37,7 +50,7 @@ $(shell mkdir -p shared)
 
 print:
 	@echo _DOCKER_ROOT_USER ....... $(_DOCKER_ROOT_USER)
-	@echo DOCKER_RUN ........ $(DOCKER_RUN)
+	@echo DOCKER_RUN .............. $(DOCKER_RUN)
 	@echo DOCKER_IMAGE_TAG ........ $(DOCKER_IMAGE_TAG)
 
 

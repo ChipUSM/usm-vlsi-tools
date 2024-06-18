@@ -1,0 +1,137 @@
+** Project: Chipalooza2024_TempSensor_AC3E
+
+.option TEMP=75
+* Flag unsafe operating conditions (exceeds models' specified limits)
+.option warn=1
+
+
+**.subckt transient
+vvss vss GND DC 0
+vvdd vdd GND DC 2.0
+X1 SENS_IN N1 N2 vdd vss net1 out OSC
+XR1 out SENS_IN SENS_IN sky130_fd_pr__res_high_po_5p73 L=8 mult=1 m=1
+XPG SENS_IN vdd net1 vdd vss PASSGATE
+**** begin user architecture code
+
+.ic v(SENS_IN)=0
+
+.control
+tran 0.1n 11u 10u
+
+meas tran period
++ TRIG v(out) VAL=0.9 RISE=1
++ TARG v(out) VAL=0.9 RISE=2
+
+let freq = 1/period
+print freq
+
+save freq
+.endc
+
+
+
+.lib /opt/pdks/sky130A/libs.tech/combined/sky130.lib.spice tt
+
+.include /opt/pdks/sky130A/libs.ref/sky130_fd_sc_hd/spice/sky130_fd_sc_hd.spice
+
+**** end user architecture code
+**.ends
+
+* expanding   symbol:  symbol/OSC.sym # of pins=7
+** sym_path: /workspaces/Chipalooza2024_TempSensor_AC3E/modules/OSC/symbol/OSC.sym
+** sch_path: /workspaces/Chipalooza2024_TempSensor_AC3E/modules/OSC/symbol/OSC.sch
+.subckt OSC SENS_IN N1 N2 VDD VSS CON_CV N3
+*.ipin SENS_IN
+*.iopin VDD
+*.iopin VSS
+*.opin N1
+*.opin N2
+*.iopin CON_CV
+*.opin N3
+XST1 SENS_IN VDD VSS N1 N1 N1 INVandCAP
+XST2 net3 VDD VSS net1 net1 net1 INVandCAP
+XST3 net1 VDD VSS N3 CON_CV SENS_IN INVandCAP
+XBUFFS net1 N2 VDD VSS BUFFMIN
+XST1B N1 VDD VSS net2 net2 net2 INVandCAP
+XST1C net2 VDD VSS net3 net3 net3 INVandCAP
+.ends
+
+
+* expanding   symbol:  symbol/PASSGATE.sym # of pins=5
+** sym_path: /workspaces/Chipalooza2024_TempSensor_AC3E/modules/PASSGATE/symbol/PASSGATE.sym
+** sch_path: /workspaces/Chipalooza2024_TempSensor_AC3E/modules/PASSGATE/symbol/PASSGATE.sch
+.subckt PASSGATE VIN CTR VOUT VDD VSS
+*.ipin VIN
+*.iopin VDD
+*.iopin VSS
+*.ipin CTR
+*.opin VOUT
+XMNSW VOUT CTR VIN VSS sky130_fd_pr__nfet_01v8 L=0.15 W=2 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2)
++ * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+XMPSW VOUT net1 VIN VDD sky130_fd_pr__pfet_01v8 L=0.15 W=6 nf=1 ad='int((nf+1)/2) * W/nf * 0.29' as='int((nf+2)/2) * W/nf * 0.29' pd='2*int((nf+1)/2)
++ * (W/nf + 0.29)' ps='2*int((nf+2)/2) * (W/nf + 0.29)' nrd='0.29 / W' nrs='0.29 / W' sa=0 sb=0 sd=0 mult=1 m=1
+xinvosc CTR VSS VSS VDD VDD net1 sky130_fd_sc_hd__inv_1
+.ends
+
+
+* expanding   symbol:  symbol/INVandCAP.sym # of pins=6
+** sym_path: /workspaces/Chipalooza2024_TempSensor_AC3E/modules/INVandCAP/symbol/INVandCAP.sym
+** sch_path: /workspaces/Chipalooza2024_TempSensor_AC3E/modules/INVandCAP/symbol/INVandCAP.sch
+.subckt INVandCAP VIN VDD VSS VOUT CON_CV CON_CBASE
+*.ipin VIN
+*.iopin VDD
+*.iopin VSS
+*.opin VOUT
+*.iopin CON_CV
+*.iopin CON_CBASE
+XINV_OSC VIN VOUT VDD VSS INV
+XCN CON_CV CON_CBASE VSS CAPOSC
+.ends
+
+
+* expanding   symbol:  symbol/BUFFMIN.sym # of pins=4
+** sym_path: /workspaces/Chipalooza2024_TempSensor_AC3E/modules/BUFFMIN/symbol/BUFFMIN.sym
+** sch_path: /workspaces/Chipalooza2024_TempSensor_AC3E/modules/BUFFMIN/symbol/BUFFMIN.sch
+.subckt BUFFMIN VIN VOUT VDD VSS
+*.iopin VDD
+*.iopin VSS
+*.ipin VIN
+*.opin VOUT
+xinvosc net1 VSS VSS VDD VDD VOUT sky130_fd_sc_hd__inv_2
+xinvosc1 VIN VSS VSS VDD VDD net1 sky130_fd_sc_hd__inv_1
+.ends
+
+
+* expanding   symbol:  symbol/INV.sym # of pins=4
+** sym_path: /workspaces/Chipalooza2024_TempSensor_AC3E/modules/INV/symbol/INV.sym
+** sch_path: /workspaces/Chipalooza2024_TempSensor_AC3E/modules/INV/symbol/INV.sch
+.subckt INV VIN VOUT VDD VSS
+*.ipin VIN
+*.iopin VDD
+*.iopin VSS
+*.opin VOUT
+xinvosc[0] VIN VSS VSS VDD VDD VOUT sky130_fd_sc_hd__inv_2
+xinvosc[1] VIN VSS VSS VDD VDD VOUT sky130_fd_sc_hd__inv_2
+xinvosc[2] VIN VSS VSS VDD VDD VOUT sky130_fd_sc_hd__inv_2
+xinvosc[3] VIN VSS VSS VDD VDD VOUT sky130_fd_sc_hd__inv_2
+xinvosc[4] VIN VSS VSS VDD VDD VOUT sky130_fd_sc_hd__inv_2
+xinvosc[5] VIN VSS VSS VDD VDD VOUT sky130_fd_sc_hd__inv_2
+.ends
+
+
+* expanding   symbol:  symbol/CAPOSC.sym # of pins=3
+** sym_path: /workspaces/Chipalooza2024_TempSensor_AC3E/modules/CAPOSC/symbol/CAPOSC.sym
+** sch_path: /workspaces/Chipalooza2024_TempSensor_AC3E/modules/CAPOSC/symbol/CAPOSC.sch
+.subckt CAPOSC TOP_V TOP_B BOT
+*.iopin TOP_V
+*.iopin TOP_B
+*.iopin BOT
+XC1_V TOP_V BOT sky130_fd_pr__cap_mim_m3_1 W=10 L=10 MF=1 m=1
+XC2_V TOP_V BOT sky130_fd_pr__cap_mim_m3_2 W=10 L=10 MF=1 m=1
+XC1_B TOP_B BOT sky130_fd_pr__cap_mim_m3_1 W=10 L=10 MF=1 m=1
+XC2_B TOP_B BOT sky130_fd_pr__cap_mim_m3_2 W=10 L=10 MF=1 m=1
+XC3_B TOP_B BOT sky130_fd_pr__cap_mim_m3_1 W=10 L=10 MF=1 m=1
+.ends
+
+.GLOBAL GND
+.end
