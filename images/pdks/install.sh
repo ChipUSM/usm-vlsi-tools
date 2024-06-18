@@ -5,7 +5,7 @@ set -u
 
 COMMIT=bba8744a60162c27cbf86fb30d926483ff768404
 
-pip install --break-system-packages volare
+pip install volare
 
 volare build --pdk=sky130 $COMMIT
 volare enable --pdk=sky130 $COMMIT

@@ -158,15 +158,15 @@ apt -y install \
 	zip \
 	zlib1g-dev \
 	python3-numpy \
-	python3-pip
+	python3-pip \
+	qt5-qmake \
+	qtbase5-dev \
+	qtbase5-dev-tools \
+	qtchooser \
+	qttools5-dev \
 
 # qt5-image-formats-plugins \
-# qt5-qmake \
-# qtbase5-dev \
-# qtbase5-dev-tools \
-# qtchooser \
 # qtmultimedia5-dev \
-# qttools5-dev \
 
 # python3-aiohttp \
 # python3-aiosignal \

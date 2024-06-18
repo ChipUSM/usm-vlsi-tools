@@ -35,6 +35,14 @@ EOF
     ln -s "/${TOOLS}/${OPENVAF_NAME}/${REPO_COMMIT_SHORT}/bin/openvaf" /usr/local/bin
 }
 
+llvm_installation () {
+    # It's required to uninstall llvm? Because we have it installed...
+    wget https://openva.fra1.cdn.digitaloceanspaces.com/llvm-15.0.7-x86_64-unknown-linux-gnu-FULL.tar.zst
+    zstd -d -c --long=31 llvm-15.0.7-x86_64-unknown-linux-gnu-FULL.tar.zst | tar -xf -
+    LLVM_CONFIG=${PWD}/LLVM/bin/llvm-config
+    PATH=${PWD}/LLVM/bin:$PATH
+}
+
 
 download_binary () {
     wget "$OPENVAF_DOWNLOAD"
@@ -47,4 +55,6 @@ download_binary () {
 }
 
 
-download_binary
+#download_binary
+llvm_installation
+compile_binary

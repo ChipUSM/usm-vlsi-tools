@@ -40,7 +40,6 @@ git checkout "${NGSPICE_REPO_COMMIT}"
 
 make -j"$(nproc)"
 make install
-ln -s "${TOOLS}/${NGSPICE_NAME}/${NGSPICE_REPO_COMMIT}/bin/ngspice" /usr/bin/ngspice
 
 # Regression tests
 make -C tests/regression check

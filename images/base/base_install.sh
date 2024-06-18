@@ -6,20 +6,16 @@ set -ex
 
 echo "[INFO] Updating, upgrading and installing packages with APT"
 
-apt -y update
-apt -y upgrade
-apt -y install \
+apt -y update && apt install -y \
 	ant \
 	bc \
-	binutils-gold \
-	bison \
+	binutils \
 	build-essential \
 	bzip2 \
 	ca-certificates \
 	cmake \
 	csh \
 	curl \
-	doxygen \
 	gawk \
 	gettext \
 	git \
@@ -37,19 +33,51 @@ apt -y install \
 	patch \
 	patchutils \
 	pciutils \
-	strace \
 	tcl \
+	libtcl8.6 \
 	tcl-tclreadline \
 	tcllib \
-	tclsh \
 	texinfo \
 	time \
 	tzdata \
 	unzip \
 	wget \
 	zip \
-	python3-numpy \
-	python3-pip
+	python3-pip \
+	python3-tk \
+	sudo \
+	gedit \
+	neovim \
+	tree \
+	less \
+	tk \
+	libtk8.6 \
+	libqt5core5a \
+	libqt5dbus5 \
+	libqt5designer5 \
+	libqt5gui5 \
+	libqt5multimedia5 \
+	libqt5multimediawidgets5 \
+	libqt5network5 \
+	libqt5printsupport5 \
+	libqt5sql5 \
+	libqt5sql5-sqlite \
+	libqt5svg5 \
+	libqt5widgets5 \
+	libqt5xml5 \
+	libqt5xmlpatterns5 \
+	libruby3.0 \
+	libglu1-mesa \
+	libqt5opengl5 \
+	libgit2-1.1 \
+	parallel \
+	xterm \
+	htop \
+	&& rm -rf /var/lib/apt/lists/*
+
+# tigervnc-standalone-server \
+# xfce4 \
+# xfce4-terminal \
 
 update-alternatives --install /usr/bin/python python /usr/bin/python3 0	
 

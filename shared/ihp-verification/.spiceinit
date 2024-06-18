@@ -1,0 +1,34 @@
+echo ******
+echo ** Reading custom .spiceinit file
+echo ******
+
+# Mandatory for sky130
+set ng_nomodcheck      ; don't check the model parameters
+set ngbehavior=hsa     ; set compatibility for reading PDK libs
+
+
+** Debug configuration
+**********************
+
+*set debug                ; yield analysis of each command in .spiceinit and .control
+*set ngdebug   ; Additional warning messages, additional files with spice processing information
+*set filetype = ascii    ; Files are TOO BIG to use this parameter
+
+* optran may reduce problems when trying to find a simulation starting point
+*optran 0 0 0 100p 2n 0 ; don't use dc operating point, but transient op
+
+
+** Normal Configuration
+***********************
+
+set wr_singlescale
+set wr_vecnames
+*option noinit          ; don't print operating point data
+*set skywaterpdk        ; some shortcuts to enhance library loading speed
+
+
+** Solver selector
+******************
+
+*option sparse          ; Sparce 1.3 matrix solver (default)
+option klu             ;  (ngspice 42+) select KLU as matrix solver 

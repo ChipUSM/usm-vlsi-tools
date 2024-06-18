@@ -1,5 +1,9 @@
 # Based on https://github.com/iic-jku/IIC-OSIC-TOOLS/blob/main/_build/Dockerfile
 
+#ARG BASE_IMAGE=gocd/gocd-agent-ubuntu-24.04:v24.1.0
+#ARG BASE_IMAGE=ubuntu:24.04
+ARG BASE_IMAGE=ubuntu:22.04
+
 ARG NGSPICE_REPO_URL="https://github.com/danchitnis/ngspice-sf-mirror"
 ARG NGSPICE_REPO_COMMIT="ngspice-42"
 ARG NGSPICE_NAME="ngspice"
@@ -22,11 +26,41 @@ ARG OPENVAF_REPO_COMMIT="a9697ae7780518f021f9f64e819b3a57033bd39f"
 ARG OPENVAF_DOWNLOAD="https://openva.fra1.cdn.digitaloceanspaces.com/openvaf_23_5_0_linux_amd64.tar.gz"
 ARG OPENVAF_NAME="openvaf"
 
+ARG KLAYOUT_REPO_URL="https://github.com/KLayout/klayout"
+ARG KLAYOUT_REPO_COMMIT="v0.29.1"
+ARG KLAYOUT_DOWNLOAD="https://www.klayout.org/downloads/Ubuntu-22/klayout_0.29.2-1_amd64.deb"
+ARG KLAYOUT_NAME="klayout"
+
+ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
+ARG XSCHEM_REPO_COMMIT="747652ffe184246edcacfc072834583efcbf84a8"
+ARG XSCHEM_NAME="xschem"
+
+ARG OPENROAD_APP_REPO_URL="https://github.com/The-OpenROAD-Project/OpenROAD.git"
+ARG OPENROAD_APP_REPO_COMMIT="d423155d69de7f683a23f6916ead418a615ad4ad"
+ARG OPENROAD_APP_NAME="openroad"
+
+ARG OPENFASOC_REPO_URL="https://github.com/idea-fasoc/OpenFASOC.git"
+ARG OPENFASOC_REPO_COMMIT="7dc5eb42cec94c02b74e72483df6fdc2b2603fb9"
+ARG OPENFASOC_NAME="openfasoc"
+
+ARG NETGEN_REPO_URL="https://github.com/rtimothyedwards/netgen"
+ARG NETGEN_REPO_COMMIT="1.5.276"
+ARG NETGEN_NAME="netgen"
+
+ARG YOSYS_REPO_URL="https://github.com/YosysHQ/yosys"
+ARG YOSYS_REPO_COMMIT="yosys-0.41"
+ARG YOSYS_NAME="yosys"
+ARG YOSYS_EQY_REPO_URL="https://github.com/YosysHQ/eqy.git"
+ARG YOSYS_EQY_NAME="yosys_eqy"
+ARG YOSYS_SBY_REPO_URL="https://github.com/YosysHQ/sby.git"
+ARG YOSYS_SBY_NAME="yosys_sby"
+ARG YOSYS_MCY_REPO_URL="https://github.com/YosysHQ/mcy.git"
+ARG YOSYS_MCY_NAME="yosys_mcy"
+
 
 #######################################################################
 # Basic configuration for base and builder
 #######################################################################
-ARG BASE_IMAGE=gocd/gocd-agent-ubuntu-24.04:v24.1.0
 
 FROM ${BASE_IMAGE} as common
 ARG CONTAINER_TAG=unknown
@@ -46,7 +80,8 @@ USER root
 FROM common as base
 
 RUN --mount=type=bind,source=images/base,target=/images/base \
-    bash /images/base/base_install.sh
+    bash /images/base/base_install.sh && \
+    bash /images/base/python_packages.sh
 
 
 #######################################################################
@@ -56,6 +91,10 @@ FROM common as builder
 
 RUN --mount=type=bind,source=images/builder,target=/images/builder \
     bash /images/builder/exhaustive-install.sh
+RUN --mount=type=bind,source=images/boost,target=/images/boost \
+    bash /images/boost/install.sh
+RUN --mount=type=bind,source=images/ortools,target=/images/ortools \
+    bash /images/ortools/install.sh
 
 
 #######################################################################
@@ -69,8 +108,6 @@ ARG MAGIC_REPO_URL \
 
 RUN --mount=type=bind,source=images/magic,target=/images/magic \
     bash /images/magic/install.sh
-
-ENV PATH=${PATH}:${TOOLS}/${MAGIC_NAME}/bin
 
 
 #######################################################################
@@ -128,22 +165,140 @@ ARG NGSPICE_REPO_URL \
 RUN --mount=type=bind,source=images/ngspice,target=/images/ngspice \
     bash /images/ngspice/install.sh
 
+    
+#######################################################################
+# Compile klayout
+#######################################################################
+FROM builder as klayout
+
+ARG KLAYOUT_REPO_URL \
+    KLAYOUT_REPO_COMMIT \
+    KLAYOUT_DOWNLOAD \
+    KLAYOUT_NAME
+
+RUN --mount=type=bind,source=images/klayout,target=/images/klayout \
+    bash /images/klayout/install.sh
+
+
+#######################################################################
+# Compile xschem
+#######################################################################
+FROM builder as xschem
+
+ARG XSCHEM_REPO_URL \
+    XSCHEM_REPO_COMMIT \
+    XSCHEM_NAME
+
+RUN --mount=type=bind,source=images/xschem,target=/images/xschem \
+    bash /images/xschem/install.sh
+
+
+#######################################################################
+# Compile yosys
+#######################################################################
+FROM builder as yosys
+
+ARG YOSYS_REPO_URL \
+    YOSYS_REPO_COMMIT \
+    YOSYS_NAME \
+    YOSYS_EQY_REPO_URL \
+    YOSYS_EQY_NAME \
+    YOSYS_SBY_REPO_URL \
+    YOSYS_SBY_NAME \
+    YOSYS_MCY_REPO_URL \
+    YOSYS_MCY_NAME
+
+RUN --mount=type=bind,source=images/yosys,target=/images/yosys \
+    bash /images/yosys/install.sh
+
+#######################################################################
+# Compile netgen
+#######################################################################
+FROM builder as netgen
+
+ARG NETGEN_REPO_URL \
+    NETGEN_REPO_COMMIT \
+    NETGEN_NAME
+
+RUN --mount=type=bind,source=images/netgen,target=/images/netgen \
+    bash /images/netgen/install.sh
+
+
+#######################################################################
+# Compile openroad
+#######################################################################
+FROM builder as openroad
+
+ARG OPENROAD_APP_REPO_URL \
+    OPENROAD_APP_REPO_COMMIT \
+    OPENROAD_APP_NAME
+
+RUN --mount=type=bind,source=images/openroad,target=/images/openroad \
+    bash /images/openroad/install.sh
+
+
+#######################################################################
+# Compile openfasoc
+#######################################################################
+FROM builder as openfasoc
+
+ARG OPENFASOC_REPO_URL \
+    OPENFASOC_REPO_COMMIT \
+    OPENFASOC_NAME
+
+RUN --mount=type=bind,source=images/openfasoc,target=/images/openfasoc \
+    bash /images/openfasoc/install.sh
+
 
 #######################################################################
 # Final output container
 #######################################################################
-FROM base as gocd-agent-ngspice
+FROM base as usm-vlsi-tools
+ARG NGSPICE_REPO_COMMIT \
+    OPEN_PDKS_REPO_COMMIT \
+    MAGIC_REPO_COMMIT \
+    IHP_PDK_REPO_COMMIT \
+    KLAYOUT_DOWNLOAD \
+    XSCHEM_REPO_COMMIT \
+    NETGEN_REPO_COMMIT
 
-ARG NGSPICE_REPO_URL \
-    NGSPICE_REPO_COMMIT \
-    NGSPICE_NAME \
-    OPEN_PDKS_REPO_COMMIT
 
-COPY --from=ngspice  ${TOOLS}/           ${TOOLS}/
-COPY --from=pdks     ${PDK_ROOT}/        ${PDK_ROOT}/
-COPY --from=ihp_pdk  ${PDK_ROOT}/sg13g2  ${PDK_ROOT}/sg13g2
+COPY --from=pdks       ${PDK_ROOT}/        ${PDK_ROOT}/
+COPY --from=ihp_pdk    ${PDK_ROOT}/sg13g2  ${PDK_ROOT}/sg13g2
+COPY --from=ngspice    ${TOOLS}/           ${TOOLS}/
+# COPY --from=klayout    ${TOOLS}/           ${TOOLS}/
+COPY --from=xschem     ${TOOLS}/           ${TOOLS}/
+COPY --from=magic      ${TOOLS}/           ${TOOLS}/
+COPY --from=netgen     ${TOOLS}/           ${TOOLS}/
+# COPY --from=yosys      ${TOOLS}/           ${TOOLS}/
+# COPY --from=openroad   ${TOOLS}/           ${TOOLS}/
+# COPY --from=openfasoc  ${TOOLS}/           ${TOOLS}/
 
-ENV PATH=${PATH}:${TOOLS}/${NGSPICE_NAME}/${NGSPICE_REPO_COMMIT}/bin \
-    LD_LIBRARY_PATH=${TOOLS}/${NGSPICE_NAME}/${NGSPICE_REPO_COMMIT}/lib
+RUN --mount=type=bind,source=images/final_structure/install,target=/images/final_structure/install \
+    bash /images/final_structure/install/install_klayout.sh
 
-USER go
+# RUN --mount=type=bind,source=shared,target=/shared \
+#     bash /shared/openfasoc_install.sh
+
+RUN --mount=type=bind,source=images/final_structure/configure,target=/images/final_structure/configure \
+    bash /images/final_structure/configure/modify_user.sh \
+    && bash /images/final_structure/configure/tool_configuration.sh \
+    && bash /images/final_structure/configure/patch_pdk_sky130.sh
+
+COPY --chown=designer:designer --chmod=755 images/final_structure/configure/.bashrc /home/designer/.bashrc
+COPY --chown=designer:designer --chmod=755 images/final_structure/configure/.bashrc /root/.bashrc
+
+COPY images/final_structure/configure/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
+
+WORKDIR /home/designer
+USER designer
+
+ENV NGSPICE_REPO_COMMIT=${NGSPICE_REPO_COMMIT} \
+    OPEN_PDKS_REPO_COMMIT=${OPEN_PDKS_REPO_COMMIT} \
+    MAGIC_REPO_COMMIT=${MAGIC_REPO_COMMIT} \
+    IHP_PDK_REPO_COMMIT=${IHP_PDK_REPO_COMMIT} \
+    KLAYOUT_DOWNLOAD=${KLAYOUT_DOWNLOAD} \
+    XSCHEM_REPO_COMMIT=${XSCHEM_REPO_COMMIT} \
+    NETGEN_REPO_COMMIT=${NETGEN_REPO_COMMIT}
