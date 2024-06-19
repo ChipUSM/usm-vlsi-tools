@@ -10,7 +10,7 @@ This work is based on:
 
 ## Setup
 
-More work is required to check all the possible uses cases of this docker image, since it's currently validated with 
+More work is required to check all the possible uses cases of this docker image, since it's currently validated on windows
 
 ## VSCode DevContainer
 
