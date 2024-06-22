@@ -2,14 +2,11 @@
 
 set -e
 
-usermod -u $USER_ID designer
-usermod -g $USER_GROUP designer
-
-#/bin/bash --rcfile /home/designer/.bashrc
-#/bin/bash --login
+[[ -v "${USER_ID}" ]]    && usermod -u $USER_ID designer
+[[ -v "${USER_GROUP}" ]] && usermod -g $USER_GROUP designer
 
 if [ "$1" != "" ]; then
-    /bin/bash -c $1
+    $1
 else
     /bin/bash
 fi

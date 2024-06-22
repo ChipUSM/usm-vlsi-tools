@@ -52,6 +52,7 @@ print:
 	@echo _DOCKER_ROOT_USER ....... $(_DOCKER_ROOT_USER)
 	@echo DOCKER_RUN .............. $(DOCKER_RUN)
 	@echo DOCKER_IMAGE_TAG ........ $(DOCKER_IMAGE_TAG)
+	@echo OS ...................... $(OS)
 
 
 build:
@@ -75,3 +76,7 @@ start-latest: build start
 
 start-notebook:
 	$(DOCKER_RUN) $(DOCKER_IMAGE_TAG) "jupyter-lab --no-browser --notebook-dir=./shared"
+
+
+push:
+	docker image push $(DOCKER_IMAGE_TAG)

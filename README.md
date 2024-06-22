@@ -12,7 +12,7 @@ This work is based on:
 
 More work is required to check all the possible uses cases of this docker image, since it's currently validated on windows
 
-## VSCode DevContainer
+## Access through VSCode DevContainer
 
 The developer's favorite. This has been tested on windows.
 
@@ -30,6 +30,7 @@ The developer's favorite. This has been tested on windows.
 3. Go to shared directory
 4. Open Vscode 
 5. Install Devcontainer extension if it's not installed and run the command `Dev Containers: Reopen in Container.`. Use `Ctrl+Shift+P` to open Command Palette.
+6. **TO FIX** On each terminal the "bash" terminal should be initialized manually.
 
 ~~~bash
 git clone --depth=1 https://github.com/ChipUSM/usm-vlsi-tools.git
@@ -37,6 +38,12 @@ cd usm-vlsi-tools/shared
 code .
 # Install DevContainer Extension
 # Ctrl-Shift-p > Dev Containers: Reopen in Container
+
+# Each terminal started on vscode will be. Is a boring white prompt
+$ 
+# Running "bash" will make them source the ".bashrc". This has colored prompt
+designer ~
+$ 
 ~~~
 
 This devcontainer configuration uses the X11 interface that some wsl distros have.
@@ -50,3 +57,15 @@ The first time the devcontainer is run, it executes the script "set-wsl-distro.p
 I have not figured out how to make windows reload those variables, so for now the only solution is to **restart the system**. Then it should work fine.
 
 **Suggestions for cleaner ways to use x11 capabilities of WSL are accepted.**
+
+## Access through Makefile
+
+This options enables a Jupyter notebook instance that can be accessed from a web browser.
+
+### Dependencies
+
+- X Server ([VcXSrv](https://github.com/marchaesen/vcxsrv) on windows, XQuartz on Mac)
+- `Make` program (I don't know how to get it on windows)
+
+### Procedure
+
