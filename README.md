@@ -8,64 +8,78 @@ This work is based on:
 - [GoCD NGSpice Agents for CICD VLSI Verification](https://github.com/akiles-esta-usado/bouquet-basic-ngspice)
 - [Open Source Integrated Circuits Docker Stacks](https://github.com/ChipUSM/osic-stacks)
 
-## Setup
+## Tool Installation
 
-More work is required to check all the possible uses cases of this docker image, since it's currently validated on windows
+### ***Makefile Windows Installation***
 
-## Access through VSCode DevContainer
+I don't know how I got it but works. Running `make --version` it says `GNU Make 4.2.1. Built for Windows32`
 
-The developer's favorite. This has been tested on windows.
+### ***XServer Installation***
 
-### Dependencies
+This step is required to open graphical user interfaces as Klayout.
+Is tested only with [VcXsrv](https://github.com/marchaesen/vcxsrv) on Windows.
 
-- WSL: A linux virtual machine optimized for windows interoperability.
-- Ubuntu Distro: It has support for X11 graphical interfaces.
-- Docker Desktop: Graphical User Interface to handle docker resources.
+**IMPORTANT!!** is to add the installation to environment PATH to enables the use of `vcxsrv` program directly from terminal.
+See [this guide](https://docs.oracle.com/cd/E83411_01/OREAD/creating-and-modifying-environment-variables-on-windows.htm#OREAD158)
 
+1. Press Windows key and search for edit environment variable.
+2. Click on `Environment Variables...`.
+3. On **User Variables**, add to `Path` the installation directory as another entry.
 
-### Procedure
+-------------
+$~$
+-------------
+
+## DevContainer with External XServer
+
+This should work on Windows, Linux and Mac, but it's only tested on windows.
 
 1. Verify that Docker Desktop is running
-2. Clone the repo 
-3. Go to shared directory
-4. Open Vscode 
-5. Install Devcontainer extension if it's not installed and run the command `Dev Containers: Reopen in Container.`. Use `Ctrl+Shift+P` to open Command Palette.
-6. **TO FIX** On each terminal the "bash" terminal should be initialized manually.
+1. Open the directory `<PROJ>/shared_xserver` with Visual Studio Code.
+1. Install Devcontainer extension if it's not installed
+1. Open the command palette (Use `Ctrl+Shift+P`) and run the command `Dev Containers: Reopen in Container.`.
+
+
+This workflow allows the use of Visual Studio Code to interact with the container, use the git capabilities, install extensions and instantiate multiple terminals.
+
+-------------
+$~$
+-------------
+
+## Makefile usage
+
+This options opens a terminal that can be used to:
+
+- Open GUI's from programs like xschem or klayout
+- Start a Jupyter notebook/lab instance accessible from a web browser
 
 ~~~bash
-git clone --depth=1 https://github.com/ChipUSM/usm-vlsi-tools.git
-cd usm-vlsi-tools/shared
-code .
-# Install DevContainer Extension
-# Ctrl-Shift-p > Dev Containers: Reopen in Container
+# (Windows) Start the X server
+make xserver
 
-# Each terminal started on vscode will be. Is a boring white prompt
-$ 
-# Running "bash" will make them source the ".bashrc". This has colored prompt
-designer ~
-$ 
+# Start a shell
+make start
+
+# Start jupyter lab
+make start-notebook
 ~~~
 
-This devcontainer configuration uses the X11 interface that some wsl distros have.
+Jupyter lab allows instantiate multiple terminals as tabs
 
-### Troubleshoot
+-------------
+$~$
+-------------
 
-> Fails to reopen on container
+## Windows Only: Using the WSL Ubuntu Xserver instance with DevContainer
 
-The first time the devcontainer is run, it executes the script "set-wsl-distro.ps1" which updates the environment variables with WSL_DISTRO.
+This workflow does not require the use of an external Xserver, since it uses the one provided on WSL Ubuntu distributions.
 
-I have not figured out how to make windows reload those variables, so for now the only solution is to **restart the system**. Then it should work fine.
+**Not recommended**. This option may have a lot of bugs related with implicit configurations.
+
+1. Verify that Docker Desktop is running
+2. Open the directory `<PROJ>/shared_wsl_xserver` with Visual Studio Code
+3. Install Devcontainer extension if it's not installed and run the command `Dev Containers: Reopen in Container.`. Use `Ctrl+Shift+P` to open Command Palette
+4. This configuration requires to set the global variable `WSL_DISTRO`, this requires restart the system to reload the environment variables. This is only required once
 
 **Suggestions for cleaner ways to use x11 capabilities of WSL are accepted.**
-
-## Access through Makefile
-
-This options enables a Jupyter notebook instance that can be accessed from a web browser.
-
-### Dependencies
-
-- X Server ([VcXSrv](https://github.com/marchaesen/vcxsrv) on windows, XQuartz on Mac)
-- `Make` program (I don't know how to get it on windows)
-
-### Procedure
-
+I have not figured out how to make windows reload those variables, so for now the only solution is to **restart the system**. There must be a better way
