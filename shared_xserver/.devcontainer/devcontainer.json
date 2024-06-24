@@ -1,0 +1,21 @@
+{
+	"name": "chipathon2024-devcontainer",
+	"image": "akilesalreadytaken/usm-vlsi-tools:latest",
+	"features": {},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-toolsai.jupyter",
+				"barakh.vscode-xschem-viewer",
+				"charliermarsh.ruff"
+			],
+			"settings": {}
+		}
+	},
+	"updateRemoteUserUID": true,
+	"containerEnv": {
+		"SHELL": "/bin/bash",
+		"PDK": "sky130A"
+	}
+}

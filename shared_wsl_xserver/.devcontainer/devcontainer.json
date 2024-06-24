@@ -27,6 +27,7 @@
 	],
 	"updateRemoteUserUID": true,
 	"containerEnv": {
+		"SHELL": "/bin/bash",
 		"DISPLAY": ":0",
 		"XDG_RUNTIME_DIR": "/mnt/wslg/runtime-dir",
 		"WAYLAND_DISPLAY": "wayland-0",
