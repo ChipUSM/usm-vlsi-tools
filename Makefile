@@ -1,4 +1,3 @@
-
 all: print
 
 PDK=sky130A
@@ -80,3 +79,7 @@ start-notebook:
 
 push:
 	docker image push $(DOCKER_IMAGE_TAG)
+
+
+pull:
+	docker image pull $(DOCKER_IMAGE_TAG)
