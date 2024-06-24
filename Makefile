@@ -68,7 +68,7 @@ start:
 
 
 start-raw: build
-	docker run -it --rm $(_DOCKER_ROOT_USER) $(DOCKER_IMAGE_TAG) bash
+	docker run -it --rm $(_DOCKER_ROOT_USER) $(DOCKER_IMAGE_TAG)
 
 
 start-latest: build start
