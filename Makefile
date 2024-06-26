@@ -85,7 +85,7 @@ ifeq (,$(_XSERVER_EXISTS))
 endif
 
 
-start:
+start: xserver
 	$(DOCKER_RUN) $(DOCKER_IMAGE_TAG) bash
 
 
@@ -101,8 +101,12 @@ start-latest: build start
 # --KernelSpecManager.ensure_native_kernel=False
 # --NotebookApp.allow_origin='*'
 
-start-notebook:
+start-notebook: xserver
 	$(DOCKER_RUN) $(DOCKER_IMAGE_TAG) "jupyter-lab --no-browser --notebook-dir=./shared --ip 0.0.0.0 --NotebookApp.token=''"
+
+
+start-devcontainer: xserver
+	code $(SHARED_DIR)
 
 
 push:

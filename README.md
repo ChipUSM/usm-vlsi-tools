@@ -40,6 +40,12 @@ This should work on Windows, Linux and Mac, but it's only tested on windows.
 1. Open the command palette (Use `Ctrl+Shift+P`) and run the command `Dev Containers: Reopen in Container.`.
 
 
+~~~bash
+# Open devcontainer
+make start-devcontainer
+~~~
+
+
 This workflow allows the use of Visual Studio Code to interact with the container, use the git capabilities, install extensions and instantiate multiple terminals.
 
 -------------
@@ -62,6 +68,9 @@ make start
 
 # Start jupyter lab
 make start-notebook
+
+# Open devcontainer
+make start-devcontainer
 ~~~
 
 Jupyter lab allows instantiate multiple terminals as tabs
