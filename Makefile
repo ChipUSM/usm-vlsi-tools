@@ -22,7 +22,7 @@ ifeq (Windows_NT,$(OS))
 
 USER_ID=1000
 USER_GROUP=1000
-DOCKER_RUN=docker run -it --rm --pull=always $(_DOCKER_ROOT_USER) \
+DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
 	--mount type=bind,source=$(SHARED_DIR),target=/home/designer/shared \
 	--user $(USER_ID):$(USER_GROUP) \
 	-e SHELL=/bin/bash \
@@ -39,7 +39,7 @@ else
 
 USER_ID=$(shell id -u)
 USER_GROUP=$(shell id -g)
-DOCKER_RUN=docker run -it --rm --pull=always $(_DOCKER_ROOT_USER) \
+DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
 	--mount type=bind,source=$(SHARED_DIR),target=/home/designer/shared \
 	-v /tmp/.X11-unix:/tmp/.X11-unix:ro \
 	-v /home/$(USER)/.Xauthority:/root/.Xauthority:rw \
@@ -85,7 +85,7 @@ ifeq (,$(_XSERVER_EXISTS))
 endif
 
 
-start: xserver
+start: xserver pull
 	$(DOCKER_RUN) $(DOCKER_IMAGE_TAG) bash
 
 
@@ -101,11 +101,11 @@ start-latest: build start
 # --KernelSpecManager.ensure_native_kernel=False
 # --NotebookApp.allow_origin='*'
 
-start-notebook: xserver
+start-notebook: xserver pull
 	$(DOCKER_RUN) $(DOCKER_IMAGE_TAG) "jupyter-lab --no-browser --notebook-dir=./shared --ip 0.0.0.0 --NotebookApp.token=''"
 
 
-start-devcontainer: xserver
+start-devcontainer: xserver pull
 	code $(SHARED_DIR)
 
 
@@ -114,4 +114,6 @@ push:
 
 
 pull:
+ifeq (,$(NO_PULL))
 	docker image pull $(DOCKER_IMAGE_TAG)
+endif
