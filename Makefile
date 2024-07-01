@@ -5,20 +5,13 @@ DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:latest
 SHARED_DIR=$(abspath ./shared_xserver)
 
 
-ifneq (,$(DOCKER_ROOT))
+ifneq (,$(ROOT))
 _DOCKER_ROOT_USER=--user root
 endif
 
+# Windows Specific Configuration
+################################
 ifeq (Windows_NT,$(OS))
-
-# To use GUIs:
-# - host.docker.internal:0 allows to connect with vcxscr
-# - I think the reuse
-# 
-# Is --net=host required?
-# - GUIs appear with or without it
-# - Notebooks don't work, but seems to take longer to fail without this option.
-# - ... this might suggest something
 
 USER_ID=1000
 USER_GROUP=1000
@@ -37,8 +30,16 @@ START_XSERVER=powershell -noprofile vcxsrv.exe :0 -multiwindow -clipboard -prima
 
 else
 
+UNAME_S := $(shell uname -s)
 USER_ID=$(shell id -u)
 USER_GROUP=$(shell id -g)
+
+# Linux Specific Configuration
+##############################
+ifeq ($(UNAME_S),Linux)
+
+# Since it uses local xserver, --net=host is required and DISPLAY should be equal to host
+
 DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
 	--mount type=bind,source=$(SHARED_DIR),target=/home/designer/shared \
 	-v /tmp/.X11-unix:/tmp/.X11-unix:ro \
@@ -54,7 +55,30 @@ DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
 	-e USER_GROUP=$(USER_GROUP) \
 	-p 8888:8888
 
+# _XSERVER_EXISTS and START_XSERVER are not required
+
 endif
+
+# Mac Specific Configuration
+############################
+ifeq ($(UNAME_S),Darwin)
+
+DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
+	--mount type=bind,source=$(SHARED_DIR),target=/home/designer/shared \
+	-e SHELL=/bin/bash \
+	-e DISPLAY=host.docker.internal:0 \
+	-e LIBGL_ALWAYS_INDIRECT=1 \
+	-e XDG_RUNTIME_DIR \
+	-e PULSE_SERVER \
+	-e USER_ID=$(USER_ID) \
+	-e USER_GROUP=$(USER_GROUP) \
+	-p 8888:8888
+
+# _XSERVER_EXISTS:=$(shell ?)
+# START_XSERVER=xquartz ... ?
+
+endif # Linux/Mac differenciation
+endif # Windows differenciation
 
 
 ########################
@@ -63,20 +87,23 @@ endif
 
 
 print:
-	@echo OS ...................... $(OS)
-	@echo SHARED_DIR .............. $(SHARED_DIR)
 	@echo DOCKER_IMAGE_TAG ........ $(DOCKER_IMAGE_TAG)
-	@echo DOCKER_RUN .............. $(DOCKER_RUN)
+	@echo SHARED_DIR .............. $(SHARED_DIR)
+	@echo OS ...................... $(OS)
+	@echo UNAME_S ................. $(UNAME_S)
+	@echo STAGE ................... $(STAGE)
 	@echo _DOCKER_ROOT_USER ....... $(_DOCKER_ROOT_USER)
 	@echo _XSERVER_EXISTS ......... $(_XSERVER_EXISTS)
+	@echo DOCKER_RUN .............. $(DOCKER_RUN)
 
 
 build:
-ifeq (,$(DOCKER_STAGE))
+ifeq (,$(STAGE))
 	docker build . -t $(DOCKER_IMAGE_TAG)
 else
-	docker build --target $(DOCKER_STAGE) . -t $(DOCKER_IMAGE_TAG)
+	docker build --target $(STAGE) . -t $(DOCKER_IMAGE_TAG)
 endif
+	docker image ls $(DOCKER_IMAGE_TAG)
 
 
 xserver:
