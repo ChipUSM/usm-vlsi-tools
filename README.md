@@ -1,4 +1,4 @@
-# usm-vlsi-tools
+# Chip USM Docker Environment for IC Design and Implementation
 
 Docker image for open source integrated circuit development.
 
@@ -12,11 +12,18 @@ This work is based on:
 
 ### ***Makefile Windows Installation***
 
-I don't know how I got it but works. Running `make --version` it says `GNU Make 4.2.1. Built for Windows32`
+***NOT TESTED!!*** 
+Install make with a Chocolatey installer, command might change a bit:
+
+~~~powershell
+Invoke-WebRequest https://community.chocolatey.org/api/v2/package/make/4.4.1 -OutFile make.nupkg
+Install-Package make.nupkg
+rm make.nupkg
+~~~
 
 ### ***XServer Installation***
 
-This step is required to open graphical user interfaces as Klayout.
+This step is required to open graphical user interfaces (xschem, magic, ngspice plots, klayout).
 Is tested only with [VcXsrv](https://github.com/marchaesen/vcxsrv) on Windows.
 
 **IMPORTANT!!** is to add the installation to environment PATH to enables the use of `vcxsrv` program directly from terminal.
@@ -25,6 +32,33 @@ See [this guide](https://docs.oracle.com/cd/E83411_01/OREAD/creating-and-modifyi
 1. Press Windows key and search for edit environment variable.
 2. Click on `Environment Variables...`.
 3. On **User Variables**, add to `Path` the installation directory as another entry.
+
+-------------
+$~$
+-------------
+
+## Makefile usage
+
+This options opens a terminal that can be used to:
+
+- Open GUI's from programs like xschem or klayout
+- Start a Jupyter notebook/lab instance accessible from a web browser
+
+~~~bash
+# (Windows) Start the X server, this is run automatically
+make xserver
+
+# Start a shell
+make start
+
+# Start jupyter lab
+# Multiple terminals could be open as tabs
+make start-notebook
+
+# Open devcontainer
+# Relies on VSCode capabilities to have multiple terminals
+make start-devcontainer
+~~~
 
 -------------
 $~$
@@ -48,32 +82,7 @@ make start-devcontainer
 
 This workflow allows the use of Visual Studio Code to interact with the container, use the git capabilities, install extensions and instantiate multiple terminals.
 
--------------
-$~$
--------------
-
-## Makefile usage
-
-This options opens a terminal that can be used to:
-
-- Open GUI's from programs like xschem or klayout
-- Start a Jupyter notebook/lab instance accessible from a web browser
-
-~~~bash
-# (Windows) Start the X server
-make xserver
-
-# Start a shell
-make start
-
-# Start jupyter lab
-make start-notebook
-
-# Open devcontainer
-make start-devcontainer
-~~~
-
-Jupyter lab allows instantiate multiple terminals as tabs
+***Note:*** PyCharm supports devcontainers, but it seems to have troubles with graphical user interfaces. VSCode is recommended until someone takes care of PyCharm support.
 
 -------------
 $~$
