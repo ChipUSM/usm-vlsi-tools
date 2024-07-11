@@ -167,7 +167,7 @@ function _path_add_tool_python() {
 # _path_add_tool_bin      "gtkwave"
 # _path_add_tool_bin      "irsim"
 # _path_add_tool_bin      "iverilog"
-_path_add_tool          "klayout"
+# _path_add_tool          "klayout"
 # _path_add_tool_custom   "libman"
 _path_add_tool_bin      "magic"
 _path_add_tool_bin      "netgen"
@@ -197,18 +197,20 @@ _path_add_tool_custom   "yosys/bin"
 set_pdk () {
     PDK=$1
     case "$PDK" in
-    gf180mcuC) echo "gf180mcuC is not supported, only D variant [default one]" ;;
+    gf180mcuC) echo "gf180mcuC is not supported, only D variant" ;;
     gf180mcuD) export STD_CELL_LIBRARY=gf180mcu_fd_sc_mcu7t5v0 ;;
     sky130A)   export STD_CELL_LIBRARY=sky130_fd_sc_hd ;;
+    sg13g2)    export STD_CELL_LIBRARY=sg13g2_stdcell ;;
     *)         echo "PDK $PDK NOT RECOGNIZED" && return ;;
     esac
 
+    export PDK=$PDK
     export PDKPATH=$PDK_ROOT/$PDK
 
     export KLAYOUT_HOME=$PDK_ROOT/$PDK/libs.tech/klayout
-    export KLAYOUT_PATH=$KLAYOUT_HOME:$(realpath $TOOLS/klayout/*)
+    export KLAYOUT_PATH=$KLAYOUT_HOME:$(realpath $TOOLS/klayout/download)
 
-    alias xschem='xschem -b --rcfile $PDK_ROOT/$PDK/libs.tech/xschem/xschemrc'
+    alias xschem='xschem --rcfile $PDK_ROOT/$PDK/libs.tech/xschem/xschemrc'
     alias xschemtcl='xschem --rcfile $PDK_ROOT/$PDK/libs.tech/xschem/xschemrc'
     alias magic='magic -rcfile $PDK_ROOT/$PDK/libs.tech/magic/*.magicrc'
 

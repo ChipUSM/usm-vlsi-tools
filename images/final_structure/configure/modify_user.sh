@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -ex
 
 # https://ioflood.com/blog/usermod-linux-command/#:~:text=Changing%20a%20User's%20Home%20Directory&text=Here's%20how%20you%20can%20do,new%2Fhome%2Fdir'.
 # groupmod -n designer ubuntu

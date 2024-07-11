@@ -9,7 +9,12 @@ ARG NGSPICE_REPO_COMMIT="ngspice-42"
 ARG NGSPICE_NAME="ngspice"
 
 ARG OPEN_PDKS_REPO_URL="https://github.com/RTimothyEdwards/open_pdks"
+# Jan 10, 2024
 ARG OPEN_PDKS_REPO_COMMIT="bdc9412b3e468c102d01b7cf6337be06ec6e9c9a"
+# May 26, 2024
+ARG OPEN_PDKS_REPO_COMMIT="bba8744a60162c27cbf86fb30d926483ff768404"
+# Jun 12, 2024
+ARG OPEN_PDKS_REPO_COMMIT="06898d0576a1820a131f58b05b6af5f504f080d9"
 ARG OPEN_PDKS_NAME="open_pdks"
 
 ARG MAGIC_REPO_URL="https://github.com/RTimothyEdwards/magic.git"
@@ -80,7 +85,8 @@ USER root
 FROM common as base
 
 RUN --mount=type=bind,source=images/base,target=/images/base \
-    bash /images/base/base_install.sh && \
+    bash /images/base/base_install.sh
+RUN --mount=type=bind,source=images/base,target=/images/base \
     bash /images/base/python_packages.sh
 
 
@@ -120,9 +126,9 @@ ARG OPEN_PDKS_REPO_URL \
     OPEN_PDKS_NAME
 
 RUN --mount=type=bind,source=images/pdks,target=/images/pdks \
-    bash /images/pdks/install.sh
+    bash /images/pdks/install_sky130.sh
 RUN --mount=type=bind,source=images/pdks,target=/images/pdks \
-    bash /images/pdks/patch.sh
+    bash /images/pdks/install_gf180mcu.sh
 
 
 #######################################################################
@@ -263,7 +269,7 @@ ARG NGSPICE_REPO_COMMIT \
     NETGEN_REPO_COMMIT
 
 
-COPY --from=pdks       ${PDK_ROOT}/        ${PDK_ROOT}/
+# COPY --from=pdks       ${PDK_ROOT}/        ${PDK_ROOT}/
 COPY --from=ihp_pdk    ${PDK_ROOT}/sg13g2  ${PDK_ROOT}/sg13g2
 COPY --from=ngspice    ${TOOLS}/           ${TOOLS}/
 # COPY --from=klayout    ${TOOLS}/           ${TOOLS}/
@@ -274,21 +280,28 @@ COPY --from=netgen     ${TOOLS}/           ${TOOLS}/
 # COPY --from=openroad   ${TOOLS}/           ${TOOLS}/
 # COPY --from=openfasoc  ${TOOLS}/           ${TOOLS}/
 
+RUN --mount=type=bind,source=images/pdks,target=/images/pdks \
+    cd /images/pdks/ \
+    && bash install_sky130.sh \
+    && bash install_gf180mcu.sh
+
 RUN --mount=type=bind,source=images/final_structure/install,target=/images/final_structure/install \
     bash /images/final_structure/install/install_klayout.sh
 
-# RUN --mount=type=bind,source=shared,target=/shared \
-#     bash /shared/openfasoc_install.sh
+RUN --mount=type=bind,source=images/final_structure/configure,target=/images/final_structure/configure \
+    cd /images/final_structure/configure/ \
+    && bash tool_configuration.sh
 
 RUN --mount=type=bind,source=images/final_structure/configure,target=/images/final_structure/configure \
-    bash /images/final_structure/configure/modify_user.sh \
-    && bash /images/final_structure/configure/tool_configuration.sh \
-    && bash /images/final_structure/configure/patch_pdk_sky130.sh
+    cd /images/final_structure/configure/ \
+    && bash patch_pdk_sky130.sh \
+    && bash patch_pdk_gf180mcu.sh \
+    && bash modify_user.sh
 
 COPY --chown=designer:designer --chmod=755 images/final_structure/configure/.bashrc /home/designer/.bashrc
 COPY --chown=designer:designer --chmod=755 images/final_structure/configure/.bashrc /root/.bashrc
-
 COPY images/final_structure/configure/entrypoint.sh /entrypoint.sh
+
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
@@ -302,3 +315,14 @@ ENV NGSPICE_REPO_COMMIT=${NGSPICE_REPO_COMMIT} \
     KLAYOUT_DOWNLOAD=${KLAYOUT_DOWNLOAD} \
     XSCHEM_REPO_COMMIT=${XSCHEM_REPO_COMMIT} \
     NETGEN_REPO_COMMIT=${NETGEN_REPO_COMMIT}
+
+
+#######################################################################
+# Digital container
+#######################################################################
+FROM usm-vlsi-tools as usm-vlsi-digital-tools
+
+USER root
+
+COPY --from=yosys      ${TOOLS}/           ${TOOLS}/
+COPY --from=openroad   ${TOOLS}/           ${TOOLS}/

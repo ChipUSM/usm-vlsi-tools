@@ -10,7 +10,12 @@
 				"barakh.vscode-xschem-viewer",
 				"charliermarsh.ruff"
 			],
-			"settings": {}
+			"settings": {
+				"[python]": {
+					"editor.formatOnSave": true,
+					"editor.defaultFormatter": "charliermarsh.ruff"
+				}
+			}
 		}
 	},
 	"updateRemoteUserUID": true,

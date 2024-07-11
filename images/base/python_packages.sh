@@ -4,7 +4,7 @@ set -ex
 
 pip install uv
 
-python -m uv pip install --system --strict --compile-bytecode --no-cache \
+uv pip install --system --strict --compile-bytecode --no-cache \
     "numpy<2" \
     gdsfactory \
     glayout \
@@ -15,13 +15,15 @@ python -m uv pip install --system --strict --compile-bytecode --no-cache \
     pytest \
     scipy \
     gdstk \
-    gdspy \
+    svgutils \
+    prettyprinttree \
     pyspice \
-    volare \
+    volare==0.18.1 \
     spyci \
-    siliconcompiler \
     jupyter \
     jupyterlab \
     ipython \
     ipykernel \
-    ipywidgets
+    ipywidgets \
+    docopt \
+    klayout

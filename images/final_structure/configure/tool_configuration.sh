@@ -1,7 +1,21 @@
 #!/bin/bash
 
-set -ex
+set -x
 
 export KLAYOUT_HOME=$TOOLS/klayout/download
-export KLAYOUT_PATH=$KLAYOUT_HOME:$KLAYOUT_PATH
+mkdir -p $KLAYOUT_HOME
+
+COUNTER=15
+
 klayout -t -ne -rr -b -y klive
+
+until [[ "$?" == "0" || $COUNTER -lt 0 ]]
+do
+    sleep 1
+    ((COUNTER--))
+    klayout -t -ne -rr -b -y klive
+done
+
+if [[ "$COUNTER" == "0" ]]; then
+    exit 1
+fi

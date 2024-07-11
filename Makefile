@@ -3,10 +3,15 @@ all: print
 PDK=sky130A
 DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:latest
 SHARED_DIR=$(abspath ./shared_xserver)
+STAGE=usm-vlsi-tools
 
 
 ifneq (,$(ROOT))
 _DOCKER_ROOT_USER=--user root
+endif
+
+ifneq (,$(NO_CACHE))
+_DOCKER_NO_CACHE=--no-cache
 endif
 
 # Windows Specific Configuration
@@ -52,8 +57,7 @@ DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
 	-e XDG_RUNTIME_DIR \
 	-e PULSE_SERVER \
 	-e USER_ID=$(USER_ID) \
-	-e USER_GROUP=$(USER_GROUP) \
-	-p 8888:8888
+	-e USER_GROUP=$(USER_GROUP)
 
 # _XSERVER_EXISTS and START_XSERVER are not required
 
@@ -99,9 +103,9 @@ print:
 
 build:
 ifeq (,$(STAGE))
-	docker build . -t $(DOCKER_IMAGE_TAG)
+	BUILDKIT_PROGRESS=plain docker build . -t $(DOCKER_IMAGE_TAG)
 else
-	docker build --target $(STAGE) . -t $(DOCKER_IMAGE_TAG)
+	BUILDKIT_PROGRESS=plain docker build --target $(STAGE) . -t $(DOCKER_IMAGE_TAG)
 endif
 	docker image ls $(DOCKER_IMAGE_TAG)
 
@@ -113,14 +117,16 @@ endif
 
 
 start: xserver pull
-	$(DOCKER_RUN) $(DOCKER_IMAGE_TAG) bash
+	$(DOCKER_RUN) $(DOCKER_IMAGE_TAG)
 
 
 start-raw:
 	docker run -it --rm $(_DOCKER_ROOT_USER) $(DOCKER_IMAGE_TAG)
 
 
-start-latest: build start
+# Avoid the pull of start
+start-latest: build
+	$(DOCKER_RUN) $(DOCKER_IMAGE_TAG)
 
 
 # Some flags that might be useful
