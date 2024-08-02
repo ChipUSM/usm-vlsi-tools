@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"scm.defaultViewMode": "tree",
+		"editor.insertSpaces": true,
+		"editor.renderWhitespace": "boundary",
+		"[python]": {
+			"editor.formatOnSave": true,
+			"editor.defaultFormatter": "charliermarsh.ruff"
+		}
+	}
+}
