@@ -12,13 +12,10 @@ This work is based on:
 
 ### ***Makefile Windows Installation***
 
-***NOT TESTED!!*** 
-Install make with a Chocolatey installer, command might change a bit:
+Use winget to install Make from the `ezwinports` project.
 
 ~~~powershell
-Invoke-WebRequest https://community.chocolatey.org/api/v2/package/make/4.4.1 -OutFile make.nupkg
-Install-Package make.nupkg
-rm make.nupkg
+winget install ezwinports.make
 ~~~
 
 ### ***XServer Installation***
