@@ -23,7 +23,7 @@ ARG MAGIC_NAME="magic"
 
 ARG IHP_PDK_REPO_URL="https://github.com/IHP-GmbH/IHP-Open-PDK.git"
 # ARG IHP_PDK_REPO_COMMIT="dceb7e6bd1a877182c3ba32c2e238be08368fa3f"
-ARG IHP_PDK_REPO_COMMIT="5a42d03194e8c98558f4e34538338a60550f89b9"
+ARG IHP_PDK_REPO_COMMIT="dev"
 ARG IHP_PDK_NAME="ihp-sg13g2"
 
 ARG OPENVAF_REPO_URL="https://github.com/iic-jku/OpenVAF.git"
@@ -264,21 +264,20 @@ ARG NGSPICE_REPO_COMMIT \
     OPEN_PDKS_REPO_COMMIT \
     MAGIC_REPO_COMMIT \
     IHP_PDK_REPO_COMMIT \
+    IHP_PDK_NAME \
     KLAYOUT_DOWNLOAD \
     XSCHEM_REPO_COMMIT \
     NETGEN_REPO_COMMIT
 
 
-# COPY --from=pdks       ${PDK_ROOT}/        ${PDK_ROOT}/
-COPY --from=ihp_pdk    ${PDK_ROOT}/sg13g2  ${PDK_ROOT}/sg13g2
-COPY --from=ngspice    ${TOOLS}/           ${TOOLS}/
-# COPY --from=klayout    ${TOOLS}/           ${TOOLS}/
-COPY --from=xschem     ${TOOLS}/           ${TOOLS}/
-COPY --from=magic      ${TOOLS}/           ${TOOLS}/
-COPY --from=netgen     ${TOOLS}/           ${TOOLS}/
-# COPY --from=yosys      ${TOOLS}/           ${TOOLS}/
-# COPY --from=openroad   ${TOOLS}/           ${TOOLS}/
-# COPY --from=openfasoc  ${TOOLS}/           ${TOOLS}/
+COPY --from=ihp_pdk    ${PDK_ROOT}/${IHP_PDK_NAME}  ${PDK_ROOT}/${IHP_PDK_NAME}
+COPY --from=ihp_pdk    ${TOOLS}/openvaf             ${TOOLS}/openvaf
+COPY --from=ngspice    ${TOOLS}/                    ${TOOLS}/
+COPY --from=xschem     ${TOOLS}/                    ${TOOLS}/
+COPY --from=magic      ${TOOLS}/                    ${TOOLS}/
+COPY --from=netgen     ${TOOLS}/                    ${TOOLS}/
+# COPY --from=yosys      ${TOOLS}/                    ${TOOLS}/
+# COPY --from=openroad   ${TOOLS}/                    ${TOOLS}/
 
 RUN --mount=type=bind,source=images/pdks,target=/images/pdks \
     cd /images/pdks/ \

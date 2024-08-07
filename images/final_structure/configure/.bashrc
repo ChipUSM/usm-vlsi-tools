@@ -175,7 +175,7 @@ _path_add_tool_bin      "ngspice"
 # _path_add_tool_bin      "nvc"
 # _path_add_tool_bin      "openroad"
 # _path_add_tool_bin      "opensta"
-# _path_add_tool_bin	"openvaf"
+_path_add_tool_bin	"openvaf"
 # _path_add_tool_custom   "osic-multitool"
 # _path_add_tool_bin      "padring"
 # _path_add_tool_bin      "pyopus"
@@ -200,12 +200,21 @@ set_pdk () {
     gf180mcuC) echo "gf180mcuC is not supported, only D variant" ;;
     gf180mcuD) export STD_CELL_LIBRARY=gf180mcu_fd_sc_mcu7t5v0 ;;
     sky130A)   export STD_CELL_LIBRARY=sky130_fd_sc_hd ;;
-    sg13g2)    export STD_CELL_LIBRARY=sg13g2_stdcell ;;
+    ihp-sg13g2)    export STD_CELL_LIBRARY=sg13g2_stdcell ;;
     *)         echo "PDK $PDK NOT RECOGNIZED" && return ;;
     esac
 
+    IHP_OPENVAF_DIR=$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/openvaf
+    if [ ! -f "$IHP_OPENVAF_DIR/psp103_nqs.osdi" ]; then
+        echo "Compiling ihp-sg13g2 osdi files"
+        openvaf $IHP_OPENVAF_DIR/psp103_nqs.va --output /tmp/psp103_nqs.osdi
+        sudo mv /tmp/psp103_nqs.osdi $IHP_OPENVAF_DIR
+    fi
+
     export PDK=$PDK
     export PDKPATH=$PDK_ROOT/$PDK
+
+    export SPICE_USERINIT_DIR=$PDK_ROOT/$PDK/libs.tech/ngspice
 
     export KLAYOUT_HOME=$PDK_ROOT/$PDK/libs.tech/klayout
     export KLAYOUT_PATH=$KLAYOUT_HOME:$(realpath $TOOLS/klayout/download)
