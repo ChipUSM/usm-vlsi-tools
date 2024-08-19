@@ -3,6 +3,7 @@
 #ARG BASE_IMAGE=gocd/gocd-agent-ubuntu-24.04:v24.1.0
 #ARG BASE_IMAGE=ubuntu:24.04
 ARG BASE_IMAGE=ubuntu:22.04
+ARG DIGITAL_BASE_IMAGE=efabless/openlane:679d5bac408f3e2fc9f87aa22452b410eff425ed-amd64
 
 ARG NGSPICE_REPO_URL="https://github.com/danchitnis/ngspice-sf-mirror"
 ARG NGSPICE_REPO_COMMIT="ngspice-42"
@@ -15,6 +16,8 @@ ARG OPEN_PDKS_REPO_COMMIT="bdc9412b3e468c102d01b7cf6337be06ec6e9c9a"
 ARG OPEN_PDKS_REPO_COMMIT="bba8744a60162c27cbf86fb30d926483ff768404"
 # Jun 12, 2024
 ARG OPEN_PDKS_REPO_COMMIT="06898d0576a1820a131f58b05b6af5f504f080d9"
+# Aug 16, 2024
+ARG OPEN_PDKS_REPO_COMMIT="0fe599b2afb6708d281543108caf8310912f54af"
 ARG OPEN_PDKS_NAME="open_pdks"
 
 ARG MAGIC_REPO_URL="https://github.com/RTimothyEdwards/magic.git"
@@ -62,6 +65,9 @@ ARG YOSYS_SBY_NAME="yosys_sby"
 ARG YOSYS_MCY_REPO_URL="https://github.com/YosysHQ/mcy.git"
 ARG YOSYS_MCY_NAME="yosys_mcy"
 
+ARG CVC_RV_REPO_URL="https://github.com/d-m-bailey/cvc"
+ARG CVC_RV_REPO_COMMIT="v1.1.5"
+ARG CVC_RV_NAME="cvc_rv"
 
 #######################################################################
 # Basic configuration for base and builder
@@ -117,19 +123,26 @@ RUN --mount=type=bind,source=images/magic,target=/images/magic \
 
 
 #######################################################################
-# Build sky130A
+# Build PDKs from open_pdks
 #######################################################################
-FROM magic as pdks
+FROM magic as open_pdks
 
 ARG OPEN_PDKS_REPO_URL \
     OPEN_PDKS_REPO_COMMIT \
     OPEN_PDKS_NAME
 
-RUN --mount=type=bind,source=images/pdks,target=/images/pdks \
-    bash /images/pdks/install_sky130.sh
-RUN --mount=type=bind,source=images/pdks,target=/images/pdks \
-    bash /images/pdks/install_gf180mcu.sh
+RUN --mount=type=bind,source=images/base,target=/images/base \
+    bash /images/base/python_packages.sh
 
+RUN --mount=type=bind,source=images/pdks,target=/images/pdks \
+    cd /images/pdks/ \
+    && bash install_sky130.sh \
+    && bash install_gf180mcu.sh
+
+RUN --mount=type=bind,source=images/final_structure/configure,target=/images/final_structure/configure \
+    cd /images/final_structure/configure/ \
+    && bash patch_pdk_sky130.sh \
+    && bash patch_pdk_gf180mcu.sh
 
 #######################################################################
 # Compile openvaf (requirement for ihp pdk)
@@ -257,6 +270,19 @@ RUN --mount=type=bind,source=images/openfasoc,target=/images/openfasoc \
 
 
 #######################################################################
+# Compile cvc_rv
+#######################################################################
+FROM builder as CVC_RV
+
+ARG CVC_RV_REPO_URL \
+    CVC_RV_REPO_COMMIT \
+    CVC_RV_NAME
+
+RUN --mount=type=bind,source=images/cvc_rv,target=/images/cvc_rv \
+    bash /images/cvc_rv/install.sh
+
+
+#######################################################################
 # Final output container
 #######################################################################
 FROM base as usm-vlsi-tools
@@ -270,20 +296,6 @@ ARG NGSPICE_REPO_COMMIT \
     NETGEN_REPO_COMMIT
 
 
-COPY --from=ihp_pdk    ${PDK_ROOT}/${IHP_PDK_NAME}  ${PDK_ROOT}/${IHP_PDK_NAME}
-COPY --from=ihp_pdk    ${TOOLS}/openvaf             ${TOOLS}/openvaf
-COPY --from=ngspice    ${TOOLS}/                    ${TOOLS}/
-COPY --from=xschem     ${TOOLS}/                    ${TOOLS}/
-COPY --from=magic      ${TOOLS}/                    ${TOOLS}/
-COPY --from=netgen     ${TOOLS}/                    ${TOOLS}/
-# COPY --from=yosys      ${TOOLS}/                    ${TOOLS}/
-# COPY --from=openroad   ${TOOLS}/                    ${TOOLS}/
-
-RUN --mount=type=bind,source=images/pdks,target=/images/pdks \
-    cd /images/pdks/ \
-    && bash install_sky130.sh \
-    && bash install_gf180mcu.sh
-
 RUN --mount=type=bind,source=images/final_structure/install,target=/images/final_structure/install \
     bash /images/final_structure/install/install_klayout.sh
 
@@ -291,10 +303,20 @@ RUN --mount=type=bind,source=images/final_structure/configure,target=/images/fin
     cd /images/final_structure/configure/ \
     && bash tool_configuration.sh
 
+COPY --from=open_pdks  ${PDK_ROOT}                  ${PDK_ROOT}
+COPY --from=ihp_pdk    ${PDK_ROOT}/${IHP_PDK_NAME}  ${PDK_ROOT}/${IHP_PDK_NAME}
+COPY --from=ihp_pdk    ${TOOLS}/openvaf             ${TOOLS}/openvaf
+COPY --from=ngspice    ${TOOLS}/                    ${TOOLS}/
+COPY --from=xschem     ${TOOLS}/                    ${TOOLS}/
+COPY --from=magic      ${TOOLS}/                    ${TOOLS}/
+COPY --from=netgen     ${TOOLS}/                    ${TOOLS}/
+COPY --from=cvc_rv     ${TOOLS}/                    ${TOOLS}/
+# COPY --from=yosys      ${TOOLS}/                    ${TOOLS}/
+# COPY --from=openroad   ${TOOLS}/                    ${TOOLS}/
+
+
 RUN --mount=type=bind,source=images/final_structure/configure,target=/images/final_structure/configure \
     cd /images/final_structure/configure/ \
-    && bash patch_pdk_sky130.sh \
-    && bash patch_pdk_gf180mcu.sh \
     && bash modify_user.sh
 
 COPY --chown=designer:designer --chmod=755 images/final_structure/configure/.bashrc /home/designer/.bashrc
@@ -319,9 +341,25 @@ ENV NGSPICE_REPO_COMMIT=${NGSPICE_REPO_COMMIT} \
 #######################################################################
 # Digital container
 #######################################################################
-FROM usm-vlsi-tools as usm-vlsi-digital-tools
+
+FROM ${DIGITAL_BASE_IMAGE} as usm-vlsi-tools-digital
+ENV TOOLS=/opt \
+    PDK_ROOT=/opt/pdks \
+    IHP_PDK_NAME=${IHP_PDK_NAME}
 
 USER root
 
-COPY --from=yosys      ${TOOLS}/           ${TOOLS}/
-COPY --from=openroad   ${TOOLS}/           ${TOOLS}/
+COPY --from=ihp_pdk    ${TOOLS}             ${TOOLS}
+
+# RUN --mount=type=bind,source=images/final_structure/configure,target=/images/final_structure/configure \
+#     bash /images/final_structure/configure/modify_user.sh
+
+# COPY --chown=designer:designer --chmod=755 images/final_structure/configure/.bashrc /home/designer/.bashrc
+# COPY --chown=designer:designer --chmod=755 images/final_structure/configure/.bashrc /root/.bashrc
+# COPY images/final_structure/configure/entrypoint.sh /entrypoint.sh
+
+# RUN chmod +x /entrypoint.sh
+# ENTRYPOINT ["/entrypoint.sh"]
+
+# WORKDIR /home/designer
+# USER designer

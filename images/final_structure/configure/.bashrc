@@ -160,7 +160,7 @@ function _path_add_tool_python() {
 }
 
 # _path_add_tool_bin      "covered"
-# _path_add_tool_bin      "cvc_rv"
+_path_add_tool_bin      "cvc_rv"
 # _path_add_tool_bin      "gaw3-xschem"
 # _path_add_tool_bin      "gds3d"
 # _path_add_tool_bin      "ghdl"
@@ -208,7 +208,13 @@ set_pdk () {
     if [ ! -f "$IHP_OPENVAF_DIR/psp103_nqs.osdi" ]; then
         echo "Compiling ihp-sg13g2 osdi files"
         openvaf $IHP_OPENVAF_DIR/psp103_nqs.va --output /tmp/psp103_nqs.osdi
-        sudo mv /tmp/psp103_nqs.osdi $IHP_OPENVAF_DIR
+
+        if [ $? -eq 0 ]; then
+            echo "Compilation succeded"
+            sudo mv /tmp/psp103_nqs.osdi $IHP_OPENVAF_DIR
+        else
+            echo "Compilation failed, reopen another terminal"
+        fi
     fi
 
     export PDK=$PDK
