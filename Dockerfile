@@ -1,62 +1,58 @@
 # Based on https://github.com/iic-jku/IIC-OSIC-TOOLS/blob/main/_build/Dockerfile
 
-#ARG BASE_IMAGE=gocd/gocd-agent-ubuntu-24.04:v24.1.0
-#ARG BASE_IMAGE=ubuntu:24.04
 ARG BASE_IMAGE=ubuntu:22.04
 ARG DIGITAL_BASE_IMAGE=efabless/openlane:679d5bac408f3e2fc9f87aa22452b410eff425ed-amd64
 
+# Jul 13, 2024 (ngspice-43)
 ARG NGSPICE_REPO_URL="https://github.com/danchitnis/ngspice-sf-mirror"
-ARG NGSPICE_REPO_COMMIT="ngspice-42"
+ARG NGSPICE_REPO_COMMIT="2af390f0b12ec460f29464d7325cf3ab5b02d98b"
 ARG NGSPICE_NAME="ngspice"
 
+# Aug 16, 2024 (master)
 ARG OPEN_PDKS_REPO_URL="https://github.com/RTimothyEdwards/open_pdks"
-# Jan 10, 2024
-ARG OPEN_PDKS_REPO_COMMIT="bdc9412b3e468c102d01b7cf6337be06ec6e9c9a"
-# May 26, 2024
-ARG OPEN_PDKS_REPO_COMMIT="bba8744a60162c27cbf86fb30d926483ff768404"
-# Jun 12, 2024
-ARG OPEN_PDKS_REPO_COMMIT="06898d0576a1820a131f58b05b6af5f504f080d9"
-# Aug 16, 2024
 ARG OPEN_PDKS_REPO_COMMIT="0fe599b2afb6708d281543108caf8310912f54af"
 ARG OPEN_PDKS_NAME="open_pdks"
 
+# Aug 16, 2024 (master)
 ARG MAGIC_REPO_URL="https://github.com/RTimothyEdwards/magic.git"
-ARG MAGIC_REPO_COMMIT="e9db9ecbc9943a304de80b32ecc58a61a46cc91f"
+ARG MAGIC_REPO_COMMIT="0c36365db8921397a258abbea0369cee8d560c99"
 ARG MAGIC_NAME="magic"
 
+# Aug 14, 2024 (dev)
 ARG IHP_PDK_REPO_URL="https://github.com/IHP-GmbH/IHP-Open-PDK.git"
-# ARG IHP_PDK_REPO_COMMIT="dceb7e6bd1a877182c3ba32c2e238be08368fa3f"
-ARG IHP_PDK_REPO_COMMIT="dev"
+ARG IHP_PDK_REPO_COMMIT="4a3e646579040b106e87dccf9434bc0eb82abaf3"
 ARG IHP_PDK_NAME="ihp-sg13g2"
 
+# Oct 30, 2023 (master)
 ARG OPENVAF_REPO_URL="https://github.com/iic-jku/OpenVAF.git"
 ARG OPENVAF_REPO_COMMIT="a9697ae7780518f021f9f64e819b3a57033bd39f"
 ARG OPENVAF_DOWNLOAD="https://openva.fra1.cdn.digitaloceanspaces.com/openvaf_23_5_0_linux_amd64.tar.gz"
 ARG OPENVAF_NAME="openvaf"
 
+# 2024-08-15 (v0.29.6)
 ARG KLAYOUT_REPO_URL="https://github.com/KLayout/klayout"
-ARG KLAYOUT_REPO_COMMIT="v0.29.1"
-ARG KLAYOUT_DOWNLOAD="https://www.klayout.org/downloads/Ubuntu-22/klayout_0.29.2-1_amd64.deb"
+ARG KLAYOUT_REPO_COMMIT="v0.29.6"
+ARG KLAYOUT_DOWNLOAD="https://www.klayout.org/downloads/Ubuntu-22/klayout_0.29.6-1_amd64.deb"
 ARG KLAYOUT_NAME="klayout"
 
+# May 21, 2024 (master)
 ARG XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem.git"
 ARG XSCHEM_REPO_COMMIT="747652ffe184246edcacfc072834583efcbf84a8"
 ARG XSCHEM_NAME="xschem"
 
+# Apr 21, 2024 ()
 ARG OPENROAD_APP_REPO_URL="https://github.com/The-OpenROAD-Project/OpenROAD.git"
 ARG OPENROAD_APP_REPO_COMMIT="d423155d69de7f683a23f6916ead418a615ad4ad"
 ARG OPENROAD_APP_NAME="openroad"
 
-ARG OPENFASOC_REPO_URL="https://github.com/idea-fasoc/OpenFASOC.git"
-ARG OPENFASOC_REPO_COMMIT="7dc5eb42cec94c02b74e72483df6fdc2b2603fb9"
-ARG OPENFASOC_NAME="openfasoc"
-
+# May 17, 2024 (1.5.276)
 ARG NETGEN_REPO_URL="https://github.com/rtimothyedwards/netgen"
 ARG NETGEN_REPO_COMMIT="1.5.276"
 ARG NETGEN_NAME="netgen"
 
+# Aug 6, 2024 (yosys-0.44)
 ARG YOSYS_REPO_URL="https://github.com/YosysHQ/yosys"
-ARG YOSYS_REPO_COMMIT="yosys-0.41"
+ARG YOSYS_REPO_COMMIT="yosys-0.44"
 ARG YOSYS_NAME="yosys"
 ARG YOSYS_EQY_REPO_URL="https://github.com/YosysHQ/eqy.git"
 ARG YOSYS_EQY_NAME="yosys_eqy"
@@ -65,6 +61,7 @@ ARG YOSYS_SBY_NAME="yosys_sby"
 ARG YOSYS_MCY_REPO_URL="https://github.com/YosysHQ/mcy.git"
 ARG YOSYS_MCY_NAME="yosys_mcy"
 
+# May 8, 2023 (v1.1.5)
 ARG CVC_RV_REPO_URL="https://github.com/d-m-bailey/cvc"
 ARG CVC_RV_REPO_COMMIT="v1.1.5"
 ARG CVC_RV_NAME="cvc_rv"
@@ -188,15 +185,15 @@ RUN --mount=type=bind,source=images/ngspice,target=/images/ngspice \
 #######################################################################
 # Compile klayout
 #######################################################################
-FROM builder as klayout
+# FROM builder as klayout
 
-ARG KLAYOUT_REPO_URL \
-    KLAYOUT_REPO_COMMIT \
-    KLAYOUT_DOWNLOAD \
-    KLAYOUT_NAME
+# ARG KLAYOUT_REPO_URL \
+#     KLAYOUT_REPO_COMMIT \
+#     KLAYOUT_DOWNLOAD \
+#     KLAYOUT_NAME
 
-RUN --mount=type=bind,source=images/klayout,target=/images/klayout \
-    bash /images/klayout/install.sh
+# RUN --mount=type=bind,source=images/klayout,target=/images/klayout \
+#     bash /images/klayout/install.sh
 
 
 #######################################################################
@@ -254,19 +251,6 @@ ARG OPENROAD_APP_REPO_URL \
 
 RUN --mount=type=bind,source=images/openroad,target=/images/openroad \
     bash /images/openroad/install.sh
-
-
-#######################################################################
-# Compile openfasoc
-#######################################################################
-FROM builder as openfasoc
-
-ARG OPENFASOC_REPO_URL \
-    OPENFASOC_REPO_COMMIT \
-    OPENFASOC_NAME
-
-RUN --mount=type=bind,source=images/openfasoc,target=/images/openfasoc \
-    bash /images/openfasoc/install.sh
 
 
 #######################################################################

@@ -2,6 +2,7 @@ all: print
 
 PDK=sky130A
 DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:latest
+DOCKER_DIGITAL_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools-digital:latest
 SHARED_DIR=$(abspath ./shared_xserver)
 STAGE=usm-vlsi-tools
 
@@ -96,6 +97,7 @@ print:
 	@echo OS ...................... $(OS)
 	@echo UNAME_S ................. $(UNAME_S)
 	@echo STAGE ................... $(STAGE)
+	@echo CACHE ................... $(_DOCKER_NO_CACHE)
 	@echo _DOCKER_ROOT_USER ....... $(_DOCKER_ROOT_USER)
 	@echo _XSERVER_EXISTS ......... $(_XSERVER_EXISTS)
 	@echo DOCKER_RUN .............. $(DOCKER_RUN)
@@ -103,9 +105,9 @@ print:
 
 build:
 ifeq (,$(STAGE))
-	BUILDKIT_PROGRESS=plain docker build . -t $(DOCKER_IMAGE_TAG)
+	BUILDKIT_PROGRESS=plain docker build $(_DOCKER_NO_CACHE) -t $(DOCKER_IMAGE_TAG) . 
 else
-	BUILDKIT_PROGRESS=plain docker build --target $(STAGE) . -t $(DOCKER_IMAGE_TAG)
+	BUILDKIT_PROGRESS=plain docker build $(_DOCKER_NO_CACHE) -t $(DOCKER_IMAGE_TAG) --target $(STAGE) . 
 endif
 	docker image ls $(DOCKER_IMAGE_TAG)
 
@@ -150,3 +152,20 @@ pull:
 ifeq (,$(NO_PULL))
 	docker image pull $(DOCKER_IMAGE_TAG)
 endif
+
+
+build-digital:
+ifeq (,$(STAGE))
+	BUILDKIT_PROGRESS=plain docker build . -t $(DOCKER_DIGITAL_IMAGE_TAG)
+else
+	BUILDKIT_PROGRESS=plain docker build --target $(STAGE) . -t $(DOCKER_DIGITAL_IMAGE_TAG)
+endif
+	docker image ls $(DOCKER_DIGITAL_IMAGE_TAG)
+
+
+start-digital: xserver pull
+	$(DOCKER_RUN) $(DOCKER_DIGITAL_IMAGE_TAG)
+
+
+start-raw-digital:
+	docker run -it --rm $(_DOCKER_ROOT_USER) $(DOCKER_DIGITAL_IMAGE_TAG)

@@ -2,7 +2,7 @@
 
 set -ex
 
-git clone --depth=1 --recurse-submodules --branch $IHP_PDK_REPO_COMMIT "$IHP_PDK_REPO_URL" ihp
+git clone --depth=1 --recurse-submodules --branch dev "$IHP_PDK_REPO_URL" ihp
 cd ihp
 git checkout $IHP_PDK_REPO_COMMIT
 

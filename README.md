@@ -8,7 +8,27 @@ This work is based on:
 - [GoCD NGSpice Agents for CICD VLSI Verification](https://github.com/akiles-esta-usado/bouquet-basic-ngspice)
 - [Open Source Integrated Circuits Docker Stacks](https://github.com/ChipUSM/osic-stacks)
 
-## Tool Installation
+## Installed Tools / PDKs
+
+| **Tool** | **Description** |
+|--|--|
+| ngspice    | SPICE analog and mixed-signal simulator          |
+| xschem     | Schematic Editor                                 |
+| magic      | Layout editor with DRC/Extraction capabilities   |
+| klayout    | Layout viewer and editor for GDS                 |
+| netgen     | Netlist Comparison                               |
+| cvc        | Circuit validity checker                         |
+| cace       | Circuit Characterization engine                  |
+| gdsfactory | Python module for gds generation                 |
+| glayout    | Python module for pdk-agnostic layout automation |
+| pygmid     | Python module for systematic circuit sizing      |
+| openvaf    | Verilog-A to OSDI compiler                       |
+
+The image also contains `sky130A`, `gf180mcuD` and `ihp-sg13g2` pdks. The latter requires the compilation of OSDI files, which is compiled when starting a `bash` terminal.
+
+Versions and commits are specified on the `Dockerfile`.
+
+## Host Required Tools
 
 ### ***Makefile Windows Installation***
 
