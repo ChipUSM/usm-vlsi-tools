@@ -2,7 +2,6 @@ all: print
 
 PDK=sky130A
 DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:latest
-DOCKER_DIGITAL_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools-digital:latest
 SHARED_DIR=$(abspath ./shared_xserver)
 STAGE=usm-vlsi-tools
 
@@ -152,20 +151,3 @@ pull:
 ifeq (,$(NO_PULL))
 	docker image pull $(DOCKER_IMAGE_TAG)
 endif
-
-
-build-digital:
-ifeq (,$(STAGE))
-	BUILDKIT_PROGRESS=plain docker build . -t $(DOCKER_DIGITAL_IMAGE_TAG)
-else
-	BUILDKIT_PROGRESS=plain docker build --target $(STAGE) . -t $(DOCKER_DIGITAL_IMAGE_TAG)
-endif
-	docker image ls $(DOCKER_DIGITAL_IMAGE_TAG)
-
-
-start-digital: xserver pull
-	$(DOCKER_RUN) $(DOCKER_DIGITAL_IMAGE_TAG)
-
-
-start-raw-digital:
-	docker run -it --rm $(_DOCKER_ROOT_USER) $(DOCKER_DIGITAL_IMAGE_TAG)

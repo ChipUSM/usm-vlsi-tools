@@ -1,0 +1,40 @@
+{
+	"name": "usm-vlsi-tools for Linux",
+	"image": "akilesalreadytaken/usm-vlsi-tools:latest",
+	"features": {},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"ms-toolsai.jupyter",
+				"barakh.vscode-xschem-viewer",
+				"charliermarsh.ruff"
+			],
+			"settings": {
+				"[python]": {
+					"editor.formatOnSave": true,
+					"editor.defaultFormatter": "charliermarsh.ruff"
+				}
+			}
+		}
+	},
+	"updateRemoteUserUID": true,
+	"mounts": [
+		{
+			"source": "/tmp/.X11-unix",
+			"target": "/tmp/.X11-unix",
+			"type": "bind"
+		},
+		{
+			"source": "/home/${localEnv:USER}/.Xauthority",
+			"target": "/home/designer/.Xauthority",
+			"type": "bind"
+		}
+	],
+	"containerEnv": {
+		"SHELL": "/bin/bash",
+		"PDK": "sky130A",
+		"DISPLAY": "${localEnv:DISPLAY}",
+		"LIBGL_ALWAYS_INDIRECT": "1"
+	}
+}

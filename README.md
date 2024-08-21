@@ -43,6 +43,8 @@ winget install ezwinports.make
 This step is required to open graphical user interfaces (xschem, magic, ngspice plots, klayout).
 Is tested only with [VcXsrv](https://github.com/marchaesen/vcxsrv) on Windows.
 
+On the `releases` page, download and install [21.1.10](https://github.com/marchaesen/vcxsrv/releases/tag/21.1.10) version. since a component of 21.1.13 release is [targeted as a virus](https://github.com/marchaesen/vcxsrv/issues/26).
+
 **IMPORTANT!!** is to add the installation to environment PATH to enables the use of `vcxsrv` program directly from terminal.
 See [this guide](https://docs.oracle.com/cd/E83411_01/OREAD/creating-and-modifying-environment-variables-on-windows.htm#OREAD158)
 

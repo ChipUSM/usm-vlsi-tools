@@ -1,7 +1,6 @@
 # Based on https://github.com/iic-jku/IIC-OSIC-TOOLS/blob/main/_build/Dockerfile
 
 ARG BASE_IMAGE=ubuntu:22.04
-ARG DIGITAL_BASE_IMAGE=efabless/openlane:679d5bac408f3e2fc9f87aa22452b410eff425ed-amd64
 
 # Jul 13, 2024 (ngspice-43)
 ARG NGSPICE_REPO_URL="https://github.com/danchitnis/ngspice-sf-mirror"
@@ -295,8 +294,8 @@ COPY --from=xschem     ${TOOLS}/                    ${TOOLS}/
 COPY --from=magic      ${TOOLS}/                    ${TOOLS}/
 COPY --from=netgen     ${TOOLS}/                    ${TOOLS}/
 COPY --from=cvc_rv     ${TOOLS}/                    ${TOOLS}/
-# COPY --from=yosys      ${TOOLS}/                    ${TOOLS}/
-# COPY --from=openroad   ${TOOLS}/                    ${TOOLS}/
+COPY --from=yosys      ${TOOLS}/                    ${TOOLS}/
+COPY --from=openroad   ${TOOLS}/                    ${TOOLS}/
 
 
 RUN --mount=type=bind,source=images/final_structure/configure,target=/images/final_structure/configure \
@@ -320,30 +319,3 @@ ENV NGSPICE_REPO_COMMIT=${NGSPICE_REPO_COMMIT} \
     KLAYOUT_DOWNLOAD=${KLAYOUT_DOWNLOAD} \
     XSCHEM_REPO_COMMIT=${XSCHEM_REPO_COMMIT} \
     NETGEN_REPO_COMMIT=${NETGEN_REPO_COMMIT}
-
-
-#######################################################################
-# Digital container
-#######################################################################
-
-FROM ${DIGITAL_BASE_IMAGE} as usm-vlsi-tools-digital
-ENV TOOLS=/opt \
-    PDK_ROOT=/opt/pdks \
-    IHP_PDK_NAME=${IHP_PDK_NAME}
-
-USER root
-
-COPY --from=ihp_pdk    ${TOOLS}             ${TOOLS}
-
-# RUN --mount=type=bind,source=images/final_structure/configure,target=/images/final_structure/configure \
-#     bash /images/final_structure/configure/modify_user.sh
-
-# COPY --chown=designer:designer --chmod=755 images/final_structure/configure/.bashrc /home/designer/.bashrc
-# COPY --chown=designer:designer --chmod=755 images/final_structure/configure/.bashrc /root/.bashrc
-# COPY images/final_structure/configure/entrypoint.sh /entrypoint.sh
-
-# RUN chmod +x /entrypoint.sh
-# ENTRYPOINT ["/entrypoint.sh"]
-
-# WORKDIR /home/designer
-# USER designer

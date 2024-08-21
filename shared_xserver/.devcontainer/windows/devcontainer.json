@@ -1,5 +1,5 @@
 {
-	"name": "chipathon2024-devcontainer",
+	"name": "usm-vlsi-tools for Windows",
 	"image": "akilesalreadytaken/usm-vlsi-tools:latest",
 	"features": {},
 	"customizations": {

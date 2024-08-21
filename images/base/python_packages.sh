@@ -27,4 +27,6 @@ uv pip install --system --strict --compile-bytecode --no-cache \
     ipywidgets \
     docopt \
     klayout \
-    pygmid
+    pygmid \
+    kfactory \
+    ruff
