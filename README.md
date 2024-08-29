@@ -24,11 +24,19 @@ This work is based on:
 | pygmid     | Python module for systematic circuit sizing      |
 | openvaf    | Verilog-A to OSDI compiler                       |
 
-The image also contains `sky130A`, `gf180mcuD` and `ihp-sg13g2` pdks. The latter requires the compilation of OSDI files, which is compiled when starting a `bash` terminal.
+The image also contains `sky130A`, `gf180mcuD` and `ihp-sg13g2` pdks, to change between pdks use the `set_pdk` command. i.e. `set_pdk sky130A`. IHP PDK requires the compilation of OSDI files, which is performed when starting a `bash` terminal. If the compilation fails, just open another bash terminal.
 
 Versions and commits are specified on the `Dockerfile`.
 
 ## Host Required Tools
+
+### ***Git Installation***
+
+Most important tool on any project: Control version system. They provide a powershell command to install it.
+
+~~~powershell
+winget install --id Git.Git -e --source winget
+~~~
 
 ### ***Makefile Windows Installation***
 
@@ -64,9 +72,6 @@ This options opens a terminal that can be used to:
 - Start a Jupyter notebook/lab instance accessible from a web browser
 
 ~~~bash
-# (Windows) Start the X server, this is run automatically
-make xserver
-
 # Start a shell
 make start
 
@@ -77,6 +82,9 @@ make start-notebook
 # Open devcontainer
 # Relies on VSCode capabilities to have multiple terminals
 make start-devcontainer
+
+# (Windows) Start the X server, this is run automatically by the other commands
+make xserver
 ~~~
 
 -------------
