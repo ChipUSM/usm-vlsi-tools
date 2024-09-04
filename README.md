@@ -10,8 +10,8 @@ This work is based on:
 
 ## Installed Tools / PDKs
 
-| **Tool** | **Description** |
-|--|--|
+| **Tool**   | **Description**                                  |
+| ---------- | ------------------------------------------------ |
 | ngspice    | SPICE analog and mixed-signal simulator          |
 | xschem     | Schematic Editor                                 |
 | magic      | Layout editor with DRC/Extraction capabilities   |
@@ -30,9 +30,30 @@ Versions and commits are specified on the `Dockerfile`.
 
 ## Host Required Tools
 
+Some of the tools are installed using terminal commands. Windows users should use Powershell.
+
+### ***Docker***
+
+Docker on Windows and Mac is installed with [Docker Desktop](https://www.docker.com/products/docker-desktop/). On Linux it requires a bunch of steps listed on [this website](https://docs.docker.com/desktop/install/linux-install/).
+
+**IMPORTANT!!** Docker Desktop **should be running** while using the environment, if not, the docker commands fails with a pipe error. The app can run on background without the window opened.
+
+![alt text](image_docker_running.png)
+
+
+### ***Visual Studio Code***
+
+One of the ways in which docker container can be used is through [Visual Studio Code](https://code.visualstudio.com/) and the [devcontainer](https://code.visualstudio.com/docs/devcontainers/containers) extension. VsCode website has an installer for the editor.
+
+The extension can be installed with the **extension explorer** (Ctrl-Shift X), or with the following command:
+
+~~~bash
+code --install-extension ms-vscode-remote.remote-containers
+~~~
+
 ### ***Git Installation***
 
-Most important tool on any project: Control version system. They provide a powershell command to install it.
+Most important tool on any project: Control version system. A powershell command to install it is provided.
 
 ~~~powershell
 winget install --id Git.Git -e --source winget
@@ -48,44 +69,46 @@ winget install ezwinports.make
 
 ### ***XServer Installation***
 
-This step is required to open graphical user interfaces (xschem, magic, ngspice plots, klayout).
-Is tested only with [VcXsrv](https://github.com/marchaesen/vcxsrv) on Windows.
+Programs that uses graphical user interfaces (xschem, magic, ngspice plots, klayout) requires an X Server running on the host machine. Linux desktops already have one. Windows and Mac requires an external server.
 
-On the `releases` page, download and install [21.1.10](https://github.com/marchaesen/vcxsrv/releases/tag/21.1.10) version. since a component of 21.1.13 release is [targeted as a virus](https://github.com/marchaesen/vcxsrv/issues/26).
+* On Windows: [VcXsrv](https://github.com/marchaesen/vcxsrv)
+* On Mac: [XQuartz](https://www.xquartz.org/)
 
-**IMPORTANT!!** is to add the installation to environment PATH to enables the use of `vcxsrv` program directly from terminal.
-See [this guide](https://docs.oracle.com/cd/E83411_01/OREAD/creating-and-modifying-environment-variables-on-windows.htm#OREAD158)
+To install `vcxsrv` goto `releases` page and install the [21.1.10](https://github.com/marchaesen/vcxsrv/releases/tag/21.1.10) release ([direct link to 21.1.10 the installer](https://github.com/marchaesen/vcxsrv/releases/download/21.1.10/vcxsrv-64.21.1.10.0.installer.exe)).
+Since a component of 21.1.13 release is [targeted as a virus](https://github.com/marchaesen/vcxsrv/issues/26) we are not going to use that version.
 
-1. Press Windows key and search for edit environment variable.
-2. Click on `Environment Variables...`.
-3. On **User Variables**, add to `Path` the installation directory as another entry.
+**IMPORTANT!!**: Add installation directory to `Path`. This allows the use of `vcxsrv` from terminal.
+
+1. Open Control Panel and search for environment variables
+2. Select the option that modifies current account
+3. On **User Variables**, add the directory to `Path` user variable.
+4. Reopen each terminal to reload the path.
+
+![alt text](image_env_variables.png)
 
 -------------
 $~$
 -------------
 
-## Makefile usage
+## USM VLSI Tools Usage
 
-This options opens a terminal that can be used to:
-
-- Open GUI's from programs like xschem or klayout
-- Start a Jupyter notebook/lab instance accessible from a web browser
+To clone the repo, use this command:
 
 ~~~bash
-# Start a shell
-make start
-
-# Start jupyter lab
-# Multiple terminals could be open as tabs
-make start-notebook
-
-# Open devcontainer
-# Relies on VSCode capabilities to have multiple terminals
-make start-devcontainer
-
-# (Windows) Start the X server, this is run automatically by the other commands
-make xserver
+git clone --recurse --depth=1 https://github.com/ChipUSM/usm-vlsi-tools.git
 ~~~
+
+Inside it, there's a `Makefile` used as a command line interface (CLI) to run programs and start the environment.
+
+
+- `make start`: Starts a shell. More shells can be opened with `xterm &`
+- `make start-notebook`: Start jupyter lab instance accesible from the browser. Multiple terminals could be open as tabs.
+- `make start-devcontainer`: Open Visual Studio Code. Inside the editor click on `reopen in container` button, or `Ctrl-Shift-P` and then search the command.
+
+
+**IMPORTANT!!** Docker Desktop **should be running** while using the environment, if not, the docker commands fails with a pipe error. The app can run on background without the window opened.
+
+![alt text](image_docker_running.png)
 
 -------------
 $~$
