@@ -3,13 +3,13 @@ all: print
 PDK=sky130A
 SHARED_DIR=$(abspath ./shared_xserver)
 
-# ifeq (,$(TEMP))
+ifeq (,$(DEV))
 DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:latest
 STAGE=usm-vlsi-tools
-# else
-# DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:temp
-# STAGE=usm-vlsi-tools-temp
-# endif
+else
+DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:temp
+STAGE=usm-vlsi-tools-temp
+endif
 
 
 ifneq (,$(ROOT))
@@ -98,6 +98,7 @@ endif # Windows differenciation
 
 print:
 	@echo DOCKER_IMAGE_TAG ........ $(DOCKER_IMAGE_TAG)
+	@echo DEV ..................... $(DEV)
 	@echo SHARED_DIR .............. $(SHARED_DIR)
 	@echo OS ...................... $(OS)
 	@echo UNAME_S ................. $(UNAME_S)
