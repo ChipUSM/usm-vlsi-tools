@@ -65,6 +65,11 @@ ARG CVC_RV_REPO_URL="https://github.com/d-m-bailey/cvc"
 ARG CVC_RV_REPO_COMMIT="v1.1.5"
 ARG CVC_RV_NAME="cvc_rv"
 
+# Jun 15, 2024 (v5.026)
+ARG VERILATOR_REPO_URL="https://github.com/verilator/verilator"
+ARG VERILATOR_REPO_COMMIT="cd693ce02b914151fcc761eaecd15af96d2006ad"
+ARG VERILATOR_NAME="verilator"
+
 #######################################################################
 # Basic configuration for base and builder
 #######################################################################
@@ -255,7 +260,7 @@ RUN --mount=type=bind,source=images/openroad,target=/images/openroad \
 #######################################################################
 # Compile cvc_rv
 #######################################################################
-FROM builder as CVC_RV
+FROM builder as cvc_rv
 
 ARG CVC_RV_REPO_URL \
     CVC_RV_REPO_COMMIT \
@@ -264,6 +269,33 @@ ARG CVC_RV_REPO_URL \
 RUN --mount=type=bind,source=images/cvc_rv,target=/images/cvc_rv \
     bash /images/cvc_rv/install.sh
 
+
+#######################################################################
+# Compile verilator
+#######################################################################
+FROM builder as verilator
+
+ARG VERILATOR_REPO_URL \
+    VERILATOR_REPO_COMMIT \
+    VERILATOR_NAME
+
+RUN --mount=type=bind,source=images/verilator,target=/images/verilator \
+    bash /images/verilator/install.sh
+
+
+#######################################################################
+# Compile OpenROAD Flow Scripts
+#######################################################################
+FROM builder as orfs
+
+RUN --mount=type=bind,source=shared_xserver/orfs/temp1,target=/shared_xserver/orfs/temp1 \
+    bash /shared_xserver/orfs/temp1/orfs_dependencies.sh
+
+RUN --mount=type=bind,source=shared_xserver/orfs/temp2,target=/shared_xserver/orfs/temp2 \
+    bash /shared_xserver/orfs/temp2/orfs_or_tools.sh
+
+RUN --mount=type=bind,source=shared_xserver/orfs/temp3,target=/shared_xserver/orfs/temp3 \
+    bash /shared_xserver/orfs/temp3/orfs_common.sh
 
 #######################################################################
 # Final output container
@@ -294,8 +326,9 @@ COPY --from=xschem     ${TOOLS}/                    ${TOOLS}/
 COPY --from=magic      ${TOOLS}/                    ${TOOLS}/
 COPY --from=netgen     ${TOOLS}/                    ${TOOLS}/
 COPY --from=cvc_rv     ${TOOLS}/                    ${TOOLS}/
+COPY --from=verilator  ${TOOLS}/                    ${TOOLS}/
 COPY --from=yosys      ${TOOLS}/                    ${TOOLS}/
-COPY --from=openroad   ${TOOLS}/                    ${TOOLS}/
+# COPY --from=openroad   ${TOOLS}/                    ${TOOLS}/
 
 
 RUN --mount=type=bind,source=images/final_structure/configure,target=/images/final_structure/configure \
@@ -319,3 +352,8 @@ ENV NGSPICE_REPO_COMMIT=${NGSPICE_REPO_COMMIT} \
     KLAYOUT_DOWNLOAD=${KLAYOUT_DOWNLOAD} \
     XSCHEM_REPO_COMMIT=${XSCHEM_REPO_COMMIT} \
     NETGEN_REPO_COMMIT=${NETGEN_REPO_COMMIT}
+
+FROM usm-vlsi-tools AS usm-vlsi-tools-temp
+USER root
+
+USER designer
