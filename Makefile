@@ -3,13 +3,13 @@ all: print
 PDK=sky130A
 SHARED_DIR=$(abspath ./shared_xserver)
 
-ifeq (,$(TEMP))
+# ifeq (,$(TEMP))
 DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:latest
 STAGE=usm-vlsi-tools
-else
-DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:temp
-STAGE=usm-vlsi-tools-temp
-endif
+# else
+# DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:temp
+# STAGE=usm-vlsi-tools-temp
+# endif
 
 
 ifneq (,$(ROOT))
