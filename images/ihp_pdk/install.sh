@@ -2,9 +2,10 @@
 
 set -ex
 
-git clone --depth=1 --recurse-submodules --branch dev "$IHP_PDK_REPO_URL" ihp
+git clone --branch dev "$IHP_PDK_REPO_URL" ihp
 cd ihp
 git checkout $IHP_PDK_REPO_COMMIT
+git submodule update --init --recursive
 
 rm -rf \
     ihp-sg13g2/libs.doc/meas \
