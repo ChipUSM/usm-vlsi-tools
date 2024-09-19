@@ -1,6 +1,7 @@
 #!/bin/bash
 
-set -e
+set -ex
+cd /tmp
 
 REPO_COMMIT_SHORT=$(echo "$OPENROAD_APP_REPO_COMMIT" | cut -c 1-7)
 

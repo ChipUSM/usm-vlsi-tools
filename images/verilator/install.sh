@@ -12,4 +12,5 @@ git checkout "${VERILATOR_REPO_COMMIT}"
 autoconf
 ./configure --prefix="${TOOLS}/${VERILATOR_NAME}/${REPO_COMMIT_SHORT}"
 make -j`nproc`
+# make test
 make install

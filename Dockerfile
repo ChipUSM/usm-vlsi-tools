@@ -70,6 +70,16 @@ ARG VERILATOR_REPO_URL="https://github.com/verilator/verilator"
 ARG VERILATOR_REPO_COMMIT="cd693ce02b914151fcc761eaecd15af96d2006ad"
 ARG VERILATOR_NAME="verilator"
 
+# Sep 7, 2024 (master)
+ARG IVERILOG_REPO_URL="https://github.com/steveicarus/iverilog.git"
+ARG IVERILOG_REPO_COMMIT="25a84d5cfcecf67bfb7734929a1df98c4b137ce6"
+ARG IVERILOG_NAME="iverilog"
+
+# Sep 7, 2024 (master)
+ARG GTKWAVE_REPO_URL="https://github.com/gtkwave/gtkwave.git"
+ARG GTKWAVE_REPO_COMMIT="0a800de96255f7fb11beadb6729fdf670da76ecb"
+ARG GTKWAVE_NAME="gtkwave"
+
 #######################################################################
 # Basic configuration for base and builder
 #######################################################################
@@ -104,10 +114,30 @@ FROM common as builder
 
 RUN --mount=type=bind,source=images/builder,target=/images/builder \
     bash /images/builder/exhaustive-install.sh
+
+ENV CMAKE_PACKAGE_ROOT_ARGS="$CMAKE_PACKAGE_ROOT_ARGS -D SWIG_ROOT=$TOOLS/common -D Eigen3_ROOT=$TOOLS/common -D GTest_ROOT=$TOOLS/common -D LEMON_ROOT=$TOOLS/common -D spdlog_ROOT=$TOOLS/common -D ortools_ROOT=$TOOLS/common"
+
 RUN --mount=type=bind,source=images/boost,target=/images/boost \
     bash /images/boost/install.sh
+RUN --mount=type=bind,source=images/swig,target=/images/swig \
+    bash /images/swig/install.sh
+RUN --mount=type=bind,source=images/eigen,target=/images/eigen \
+    bash /images/eigen/install.sh
+RUN --mount=type=bind,source=images/cudd,target=/images/cudd \
+    bash /images/cudd/install.sh
+RUN --mount=type=bind,source=images/cusp,target=/images/cusp \
+    bash /images/cusp/install.sh
+RUN --mount=type=bind,source=images/lemon,target=/images/lemon \
+    bash /images/lemon/install.sh
+RUN --mount=type=bind,source=images/spdlog,target=/images/spdlog \
+    bash /images/spdlog/install.sh
+RUN --mount=type=bind,source=images/gtest,target=/images/gtest \
+    bash /images/gtest/install.sh
 RUN --mount=type=bind,source=images/ortools,target=/images/ortools \
     bash /images/ortools/install.sh
+
+ENV PATH="$TOOLS/common/bin:$PATH" \
+    LD_LIBRARY_PATH="$TOOLS/common/lib64:$TOOLS/common/lib:$LD_LIBRARY_PATH"
 
 
 #######################################################################
@@ -282,6 +312,18 @@ ARG VERILATOR_REPO_URL \
 RUN --mount=type=bind,source=images/verilator,target=/images/verilator \
     bash /images/verilator/install.sh
 
+    
+#######################################################################
+# Compile iverilog
+#######################################################################
+FROM builder as iverilog
+
+ARG IVERILOG_REPO_URL \
+    IVERILOG_REPO_COMMIT \
+    IVERILOG_NAME
+
+RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
+    bash /images/iverilog/install.sh
 
 #######################################################################
 # Compile OpenROAD Flow Scripts
@@ -318,6 +360,7 @@ RUN --mount=type=bind,source=images/final_structure/configure,target=/images/fin
     cd /images/final_structure/configure/ \
     && bash tool_configuration.sh
 
+COPY --from=builder    ${PDK_ROOT}/common           ${PDK_ROOT}/common
 COPY --from=open_pdks  ${PDK_ROOT}                  ${PDK_ROOT}
 COPY --from=ihp_pdk    ${PDK_ROOT}/${IHP_PDK_NAME}  ${PDK_ROOT}/${IHP_PDK_NAME}
 COPY --from=ihp_pdk    ${TOOLS}/openvaf             ${TOOLS}/openvaf
@@ -327,6 +370,7 @@ COPY --from=magic      ${TOOLS}/                    ${TOOLS}/
 COPY --from=netgen     ${TOOLS}/                    ${TOOLS}/
 COPY --from=cvc_rv     ${TOOLS}/                    ${TOOLS}/
 COPY --from=verilator  ${TOOLS}/                    ${TOOLS}/
+COPY --from=iverilog   ${TOOLS}/                    ${TOOLS}/
 COPY --from=yosys      ${TOOLS}/                    ${TOOLS}/
 # COPY --from=openroad   ${TOOLS}/                    ${TOOLS}/
 
@@ -335,11 +379,11 @@ RUN --mount=type=bind,source=images/final_structure/configure,target=/images/fin
     cd /images/final_structure/configure/ \
     && bash modify_user.sh
 
-COPY --chown=designer:designer --chmod=755 images/final_structure/configure/.bashrc /home/designer/.bashrc
-COPY --chown=designer:designer --chmod=755 images/final_structure/configure/.bashrc /root/.bashrc
-COPY images/final_structure/configure/entrypoint.sh /entrypoint.sh
+RUN --mount=type=bind,source=images/final_structure/configure,target=/images/final_structure/configure \
+    bash -c 'cat images/final_structure/configure/.bashrc' >> /home/designer/.bashrc && \
+    bash -c 'cat images/final_structure/configure/.bashrc' >> /root/.bashrc
 
-RUN chmod +x /entrypoint.sh
+COPY --chmod=755 images/final_structure/configure/entrypoint.sh /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 
 WORKDIR /home/designer
