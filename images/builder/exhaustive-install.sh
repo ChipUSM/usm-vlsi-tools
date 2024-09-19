@@ -139,7 +139,6 @@ apt -y install \
 	ruby-rubygems \
 	rustc \
 	strace \
-	swig \
 	tcl \
 	tcl-dev \
 	tcl-tclreadline \

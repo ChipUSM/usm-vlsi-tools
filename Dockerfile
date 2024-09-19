@@ -28,10 +28,10 @@ ARG OPENVAF_REPO_COMMIT="a9697ae7780518f021f9f64e819b3a57033bd39f"
 ARG OPENVAF_DOWNLOAD="https://openva.fra1.cdn.digitaloceanspaces.com/openvaf_23_5_0_linux_amd64.tar.gz"
 ARG OPENVAF_NAME="openvaf"
 
-# 2024-08-15 (v0.29.6)
+# Feb 16, 2024 (v0.28.17)
 ARG KLAYOUT_REPO_URL="https://github.com/KLayout/klayout"
-ARG KLAYOUT_REPO_COMMIT="v0.29.6"
-ARG KLAYOUT_DOWNLOAD="https://www.klayout.org/downloads/Ubuntu-22/klayout_0.29.6-1_amd64.deb"
+ARG KLAYOUT_REPO_COMMIT="v0.28.17"
+ARG KLAYOUT_DOWNLOAD="https://www.klayout.org/downloads/Ubuntu-22/klayout_0.28.17-1_amd64.deb"
 ARG KLAYOUT_NAME="klayout"
 
 # May 21, 2024 (master)
@@ -360,19 +360,19 @@ RUN --mount=type=bind,source=images/final_structure/configure,target=/images/fin
     cd /images/final_structure/configure/ \
     && bash tool_configuration.sh
 
-COPY --from=builder    ${PDK_ROOT}/common           ${PDK_ROOT}/common
 COPY --from=open_pdks  ${PDK_ROOT}                  ${PDK_ROOT}
 COPY --from=ihp_pdk    ${PDK_ROOT}/${IHP_PDK_NAME}  ${PDK_ROOT}/${IHP_PDK_NAME}
+COPY --from=builder    ${tools}/common              ${tools}/common
 COPY --from=ihp_pdk    ${TOOLS}/openvaf             ${TOOLS}/openvaf
-COPY --from=ngspice    ${TOOLS}/                    ${TOOLS}/
-COPY --from=xschem     ${TOOLS}/                    ${TOOLS}/
-COPY --from=magic      ${TOOLS}/                    ${TOOLS}/
-COPY --from=netgen     ${TOOLS}/                    ${TOOLS}/
-COPY --from=cvc_rv     ${TOOLS}/                    ${TOOLS}/
-COPY --from=verilator  ${TOOLS}/                    ${TOOLS}/
-COPY --from=iverilog   ${TOOLS}/                    ${TOOLS}/
-COPY --from=yosys      ${TOOLS}/                    ${TOOLS}/
-# COPY --from=openroad   ${TOOLS}/                    ${TOOLS}/
+COPY --from=ngspice    ${TOOLS}/ngspice             ${TOOLS}/ngspice
+COPY --from=xschem     ${TOOLS}/xschem              ${TOOLS}/xschem
+COPY --from=magic      ${TOOLS}/magic               ${TOOLS}/magic
+COPY --from=netgen     ${TOOLS}/netgen              ${TOOLS}/netgen
+COPY --from=cvc_rv     ${TOOLS}/cvc_rv              ${TOOLS}/cvc_rv
+COPY --from=verilator  ${TOOLS}/verilator           ${TOOLS}/verilator
+COPY --from=iverilog   ${TOOLS}/iverilog            ${TOOLS}/iverilog
+COPY --from=yosys      ${TOOLS}/yosys               ${TOOLS}/yosys
+COPY --from=openroad   ${TOOLS}/openroad            ${TOOLS}/openroad
 
 
 RUN --mount=type=bind,source=images/final_structure/configure,target=/images/final_structure/configure \
