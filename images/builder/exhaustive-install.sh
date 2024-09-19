@@ -20,6 +20,7 @@ apt -y install \
 	bzip2 \
 	ca-certificates \
 	cargo \
+	meson \
 	clang-15 \
 	clang-tools-15 \
 	cmake \
