@@ -13,6 +13,7 @@ make NO_PULL=Y STAGE=ngspice   build |& tee build_ngspice.log
 make NO_PULL=Y STAGE=xschem    build |& tee build_xschem.log
 make NO_PULL=Y STAGE=yosys     build |& tee build_yosys.log
 make NO_PULL=Y STAGE=netgen    build |& tee build_netgen.log
+make NO_PULL=Y STAGE=gaw       build |& tee build_gaw.log
 # make NO_PULL=Y STAGE=gtkwave   build |& tee build_gtkwave.log
 make NO_PULL=Y STAGE=openroad  build |& tee build_openroad.log
 make NO_PULL=Y STAGE=iverilog  build |& tee build_iverilog.log

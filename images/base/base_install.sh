@@ -66,6 +66,10 @@ NGSPICE_DEPS=(
 	libxft2
 )
 
+GAW_DEPS=(
+	libasound2
+)
+
 KLAYOUT_DEPS=(
 	libqt5core5a
 	libqt5designer5
@@ -85,6 +89,10 @@ KLAYOUT_DEPS=(
 	libqt5dbus5
 )
 
+OPENROAD_DEPS=(
+	libqt5charts5
+)
+
 ORFS_DEPS=(
 	time
 )
@@ -95,35 +103,13 @@ DEPS=(
 	"${XSCHEM_DEPS[@]}"
 	"${MAGIC_DEPS[@]}"
 	"${NGSPICE_DEPS[@]}"
+	"${GAW_DEPS[@]}"
 	"${KLAYOUT_DEPS[@]}"
+	"${OPENROAD_DEPS[@]}"
 	"${ORFS_DEPS[@]}"
 )
 
 apt install -y --no-install-recommends "${DEPS[@]}"
-
-
-# Old dependencies
-# 	ant \
-# 	bc \
-# 	ca-certificates \
-# 	gettext \
-# 	help2man \
-# 	libgomp1 \
-# 	libtcl \
-# 	pciutils \
-# 	tcl \
-# 	tcllib \
-# 	texinfo \
-# 	tzdata \
-# 	python3-tk \
-# 	libqt5sql5-sqlite \
-# 	cmake \
-# 	csh \
-# 	gnupg2 \
-# 	gperf \
-# 	gpg \
-# 	time \
-# 	gedit
 
 rm -rf /var/lib/apt/lists/*
 rm -rf /tmp/*
@@ -135,8 +121,3 @@ apt -y clean
 # xfce4-terminal \
 
 update-alternatives --install /usr/bin/python python /usr/bin/python3 0	
-
-# cd /usr/lib/llvm-15/bin
-# for f in *; do rm -f /usr/bin/"$f"; \
-#     ln -s ../lib/llvm-15/bin/"$f" /usr/bin/"$f"
-# done

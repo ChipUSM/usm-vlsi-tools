@@ -37,7 +37,7 @@ function _path_add_tool_python() {
 
 # _path_add_tool_bin      "covered"
 _path_add_tool_bin      "cvc_rv"
-# _path_add_tool_bin      "gaw3-xschem"
+_path_add_tool_bin      "gaw3-xschem"
 # _path_add_tool_bin      "gds3d"
 # _path_add_tool_bin      "ghdl"
 # _path_add_tool_bin      "gtkwave"

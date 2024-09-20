@@ -49,6 +49,11 @@ ARG NETGEN_REPO_URL="https://github.com/rtimothyedwards/netgen"
 ARG NETGEN_REPO_COMMIT="1.5.276"
 ARG NETGEN_NAME="netgen"
 
+# Oct 25, 2023 (main)
+ARG GAW3_XSCHEM_REPO_URL="https://github.com/StefanSchippers/xschem-gaw.git"
+ARG GAW3_XSCHEM_REPO_COMMIT="640c672e1ad768b92eb6a15943459a1d2214e1dc"
+ARG GAW3_XSCHEM_NAME="gaw3-xschem"
+
 # Aug 6, 2024 (yosys-0.44)
 ARG YOSYS_REPO_URL="https://github.com/YosysHQ/yosys"
 ARG YOSYS_REPO_COMMIT="yosys-0.44"
@@ -280,6 +285,19 @@ RUN --mount=type=bind,source=images/netgen,target=/images/netgen \
 
 
 #######################################################################
+# Compile gaw
+#######################################################################
+FROM builder as gaw
+
+ARG GAW3_XSCHEM_REPO_URL \
+    GAW3_XSCHEM_REPO_COMMIT \
+    GAW3_XSCHEM_NAME
+
+RUN --mount=type=bind,source=images/gaw,target=/images/gaw \
+    bash /images/gaw/install.sh
+
+
+#######################################################################
 # Compile gtkwave
 #######################################################################
 # FROM builder as gtkwave
@@ -385,6 +403,7 @@ COPY --from=ngspice    ${TOOLS}/ngspice             ${TOOLS}/ngspice
 COPY --from=xschem     ${TOOLS}/xschem              ${TOOLS}/xschem
 COPY --from=magic      ${TOOLS}/magic               ${TOOLS}/magic
 COPY --from=netgen     ${TOOLS}/netgen              ${TOOLS}/netgen
+COPY --from=gaw        ${TOOLS}/gaw3-xschem         ${TOOLS}/gaw3-xschem
 COPY --from=cvc_rv     ${TOOLS}/cvc_rv              ${TOOLS}/cvc_rv
 COPY --from=verilator  ${TOOLS}/verilator           ${TOOLS}/verilator
 COPY --from=iverilog   ${TOOLS}/iverilog            ${TOOLS}/iverilog
