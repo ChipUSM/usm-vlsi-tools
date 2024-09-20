@@ -54,3 +54,4 @@ dkms.conf
 # Python/Jupyter
 **/.ipynb_checkpoints
 *.log
+**/_build_logs

@@ -4,7 +4,7 @@ set -ex
 
 apt -y update
 
-apt install -y  --no-install-recommends locales
+apt install -y  --no-install-recommends locales apt-utils
 sed -i -e "s/# $LC_ALL UTF-8/$LC_ALL UTF-8/" /etc/locale.gen
 dpkg-reconfigure --frontend=noninteractive locales
 update-locale LANG=$LANG
@@ -41,6 +41,7 @@ UTILITY_DEPS=(
 	neovim
 	nano
 	gedit
+	gtkwave
 )
 
 XSCHEM_DEPS=(

@@ -280,6 +280,18 @@ RUN --mount=type=bind,source=images/netgen,target=/images/netgen \
 
 
 #######################################################################
+# Compile gtkwave
+#######################################################################
+# FROM builder as gtkwave
+# ARG GTKWAVE_REPO_URL \
+#     GTKWAVE_REPO_COMMIT \
+#     GTKWAVE_NAME
+
+# RUN --mount=type=bind,source=images/gtkwave,target=/images/gtkwave \
+#     bash /images/gtkwave/install.sh
+
+
+#######################################################################
 # Compile openroad
 #######################################################################
 FROM builder as openroad
