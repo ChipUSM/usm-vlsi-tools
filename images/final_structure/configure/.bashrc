@@ -151,3 +151,10 @@ alias grep="grep --color=auto"
 export CMAKE_PACKAGE_ROOT_ARGS="$CMAKE_PACKAGE_ROOT_ARGS -D SWIG_ROOT=$TOOLS/common -D Eigen3_ROOT=$TOOLS/common -D GTest_ROOT=$TOOLS/common -D LEMON_ROOT=$TOOLS/common -D spdlog_ROOT=$TOOLS/common -D ortools_ROOT=$TOOLS/common"
 export PATH="$TOOLS/common/bin:$PATH"
 export LD_LIBRARY_PATH="$TOOLS/common/lib64:$TOOLS/common/lib:$LD_LIBRARY_PATH"
+
+# ORFS Makefile overwrited variables
+export ORFS_DIR=$TOOLS/OpenROAD-flow-scripts
+export OPENROAD_EXE=openroad
+export YOSYS_EXE=yosys
+export YOSYS_CMD=yosys
+export OPENSTA_EXE=sta

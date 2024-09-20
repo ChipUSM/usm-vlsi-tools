@@ -1,12 +1,13 @@
 #!/bin/bash
 
 set -ex
+cd /tmp
 
 # Build yosys
 # -----------
 
 REPO_COMMIT_SHORT="$YOSYS_REPO_COMMIT"
-export YOSYS_PREFIX="${TOOLS}/${YOSYS_NAME}/${REPO_COMMIT_SHORT}"
+YOSYS_PREFIX="${TOOLS}/${YOSYS_NAME}/${REPO_COMMIT_SHORT}"
 
 git clone --depth=1 -b "${YOSYS_REPO_COMMIT}" --recurse "${YOSYS_REPO_URL}" "${YOSYS_NAME}"
 cd "${YOSYS_NAME}"
@@ -36,8 +37,8 @@ cd ..
 # Install yosys mcy
 # -----------------
 
-git clone --depth=1 -b "${YOSYS_REPO_COMMIT}" --recurse ${YOSYS_MCY_REPO_URL} ${YOSYS_MCY_NAME}
-cd ${YOSYS_MCY_NAME}
-sed -i "s#^PREFIX.*#PREFIX=${YOSYS_PREFIX}#g" Makefile
-make install -j"$(nproc)"
-cd ..
+# git clone --depth=1 -b "${YOSYS_REPO_COMMIT}" --recurse ${YOSYS_MCY_REPO_URL} ${YOSYS_MCY_NAME}
+# cd ${YOSYS_MCY_NAME}
+# sed -i "s#^PREFIX.*#PREFIX=${YOSYS_PREFIX}#g" Makefile
+# make install -j"$(nproc)"
+# cd ..

@@ -40,6 +40,7 @@ UTILITY_DEPS=(
 	python3-pip
 	neovim
 	nano
+	gedit
 )
 
 XSCHEM_DEPS=(
@@ -83,6 +84,10 @@ KLAYOUT_DEPS=(
 	libqt5dbus5
 )
 
+ORFS_DEPS=(
+	time
+)
+
 DEPS=(
 	"${BUILD_DEPS[@]}"
 	"${UTILITY_DEPS[@]}"
@@ -90,6 +95,7 @@ DEPS=(
 	"${MAGIC_DEPS[@]}"
 	"${NGSPICE_DEPS[@]}"
 	"${KLAYOUT_DEPS[@]}"
+	"${ORFS_DEPS[@]}"
 )
 
 apt install -y --no-install-recommends "${DEPS[@]}"

@@ -1,5 +1,6 @@
 #!/bin/bash
-set -e
+
+set -ex
 cd /tmp || exit 1
 
 REPO_COMMIT_SHORT=$(echo "$IVERILOG_REPO_COMMIT" | cut -c 1-5)

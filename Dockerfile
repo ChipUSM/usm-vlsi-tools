@@ -80,6 +80,11 @@ ARG GTKWAVE_REPO_URL="https://github.com/gtkwave/gtkwave.git"
 ARG GTKWAVE_REPO_COMMIT="0a800de96255f7fb11beadb6729fdf670da76ecb"
 ARG GTKWAVE_NAME="gtkwave"
 
+# Jul 27, 2024 (master)
+ARG ORFS_REPO_URL="https://github.com/The-OpenROAD-Project/OpenROAD-flow-scripts"
+ARG ORFS_REPO_COMMIT="a0615e8f0e00649cf642861e4e1e1951fa33df02"
+ARG ORFS_NAME="OpenROAD-flow-scripts"
+
 #######################################################################
 # Basic configuration for base and builder
 #######################################################################
@@ -325,19 +330,19 @@ ARG IVERILOG_REPO_URL \
 RUN --mount=type=bind,source=images/iverilog,target=/images/iverilog \
     bash /images/iverilog/install.sh
 
+
 #######################################################################
 # Compile OpenROAD Flow Scripts
 #######################################################################
 FROM builder as orfs
 
-RUN --mount=type=bind,source=shared_xserver/orfs/temp1,target=/shared_xserver/orfs/temp1 \
-    bash /shared_xserver/orfs/temp1/orfs_dependencies.sh
+ARG ORFS_REPO_URL \
+    ORFS_REPO_COMMIT \
+    ORFS_NAME
 
-RUN --mount=type=bind,source=shared_xserver/orfs/temp2,target=/shared_xserver/orfs/temp2 \
-    bash /shared_xserver/orfs/temp2/orfs_or_tools.sh
+RUN --mount=type=bind,source=images/orfs,target=/images/orfs \
+    bash /images/orfs/install.sh
 
-RUN --mount=type=bind,source=shared_xserver/orfs/temp3,target=/shared_xserver/orfs/temp3 \
-    bash /shared_xserver/orfs/temp3/orfs_common.sh
 
 #######################################################################
 # Final output container
@@ -362,7 +367,7 @@ RUN --mount=type=bind,source=images/final_structure/configure,target=/images/fin
 
 COPY --from=open_pdks  ${PDK_ROOT}                  ${PDK_ROOT}
 COPY --from=ihp_pdk    ${PDK_ROOT}/${IHP_PDK_NAME}  ${PDK_ROOT}/${IHP_PDK_NAME}
-COPY --from=builder    ${tools}/common              ${tools}/common
+COPY --from=builder    ${TOOLS}/common              ${TOOLS}/common
 COPY --from=ihp_pdk    ${TOOLS}/openvaf             ${TOOLS}/openvaf
 COPY --from=ngspice    ${TOOLS}/ngspice             ${TOOLS}/ngspice
 COPY --from=xschem     ${TOOLS}/xschem              ${TOOLS}/xschem
@@ -373,6 +378,7 @@ COPY --from=verilator  ${TOOLS}/verilator           ${TOOLS}/verilator
 COPY --from=iverilog   ${TOOLS}/iverilog            ${TOOLS}/iverilog
 COPY --from=yosys      ${TOOLS}/yosys               ${TOOLS}/yosys
 COPY --from=openroad   ${TOOLS}/openroad            ${TOOLS}/openroad
+COPY --from=orfs       ${TOOLS}/OpenROAD-flow-scripts   ${TOOLS}/OpenROAD-flow-scripts
 
 
 RUN --mount=type=bind,source=images/final_structure/configure,target=/images/final_structure/configure \

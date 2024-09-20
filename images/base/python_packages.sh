@@ -29,4 +29,5 @@ uv pip install --system --strict --compile-bytecode --no-cache \
     klayout \
     pygmid \
     kfactory \
-    ruff
+    ruff \
+    click
