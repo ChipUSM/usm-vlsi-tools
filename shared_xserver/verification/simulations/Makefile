@@ -19,18 +19,14 @@ print:
 	@echo RAW_FILE: .......... $(RAW_FILE)
 
 
-test-env-py:
-	python3 eval.py $(RAW_FILE)
-
-
 sim:
 	SPICE_USERINIT_DIR=$(SPICE_DIR) ngspice -b -o $(SPICE_NAME).log -r $(RAW_FILE) -a $(SPICE_FILE)
 
 
 test-sky130:
-	PDK=sky130A make TOP=sky130-verification/sky130-verification.spice sim
+	PDK=sky130A     make TOP=sky130A/sky130-verification.spice sim
 	grep "freq = 1.381854e+08" sky130-verification.log
 
 test-ihp:
-	PDK=sg13g2  make TOP=ihp-verification/ihp-verification.spice sim
+	PDK=ihp-sg13g2  make TOP=ihp-sg13g2/ihp-verification.spice sim
 	grep "psrr                =  -6.152994e+0" ihp-verification.log
