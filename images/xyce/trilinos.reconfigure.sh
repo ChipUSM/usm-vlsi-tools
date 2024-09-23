@@ -1,0 +1,78 @@
+#!/bin/sh
+
+SRCDIR="/tmp/$XYCE_NAME/trilinos"
+ARCHDIR="/tmp/$XYCE_NAME/xycelibs/parallel"
+FLAGS="-O3 -fPIC"
+PATH=$PATH:/usr/lib64/openmpi/bin
+
+CMAKE_SPECIFICS_GCC=(
+	-G "Unix Makefiles"
+	-DCMAKE_C_COMPILER=gcc
+	-DCMAKE_C_FLAGS="$FLAGS"
+	-DCMAKE_CXX_COMPILER=g++
+	-DCMAKE_CXX_FLAGS="$FLAGS"
+	-DCMAKE_Fortran_COMPILER=gfortran
+	-DCMAKE_Fortran_FLAGS="$FLAGS"
+	-DCMAKE_INSTALL_PREFIX="$ARCHDIR"
+	-DCMAKE_MAKE_PROGRAM="make"
+)
+
+CMAKE_SPECIFICS_OPENMPI=(
+	-G "Unix Makefiles"
+	-DCMAKE_C_COMPILER=mpicc
+	-DCMAKE_C_FLAGS="$FLAGS"
+	-DCMAKE_CXX_COMPILER=mpic++
+	-DCMAKE_CXX_FLAGS="$FLAGS"
+	-DCMAKE_Fortran_COMPILER=mpif77
+	-DCMAKE_Fortran_FLAGS="$FLAGS"
+	-DCMAKE_INSTALL_PREFIX="$ARCHDIR"
+	-DCMAKE_MAKE_PROGRAM="make"
+)
+
+MODULES=(
+	-DTrilinos_ENABLE_NOX=ON
+	-DTrilinos_ENABLE_EpetraExt=ON
+	-DTrilinos_ENABLE_TrilinosCouplings=ON
+	-DTrilinos_ENABLE_Ifpack=ON
+	-DTrilinos_ENABLE_AztecOO=ON
+	-DTrilinos_ENABLE_Belos=ON
+	-DTrilinos_ENABLE_Teuchos=ON
+	-DTrilinos_ENABLE_COMPLEX_DOUBLE=ON
+	-DTrilinos_ENABLE_Amesos=ON
+	-DTrilinos_ENABLE_Amesos2=ON
+	-DTrilinos_ENABLE_Sacado=ON
+	-DTrilinos_ENABLE_Stokhos=ON
+	-DTrilinos_ENABLE_Kokkos=ON
+	# -DTrilinos_ENABLE_Isorropia=ON
+	# -DTrilinos_ENABLE_Zoltan=ON
+	-DTrilinos_ENABLE_ALL_OPTIONAL_PACKAGES=OFF
+	-DTrilinos_ENABLE_CXX11=ON
+)
+
+MODULE_SPECIFIC_CONFIGURATION=(
+	-DNOX_ENABLE_LOCA=ON
+	-DEpetraExt_BUILD_BTF=ON
+	-DEpetraExt_BUILD_EXPERIMENTAL=ON
+	-DEpetraExt_BUILD_GRAPH_REORDERINGS=ON
+	-DAmesos_ENABLE_KLU=ON
+	-DAmesos2_ENABLE_KLU2=ON
+	-DAmesos2_ENABLE_Basker=ON
+)
+
+# If MPI is not used, comment that element
+THIRD_PARTY_LIBRARIES=(
+	-DTPL_ENABLE_AMD=ON
+	-DAMD_LIBRARY_DIRS="/usr/lib"
+	-DTPL_AMD_INCLUDE_DIRS="/usr/include/suitesparse"
+	-DTPL_ENABLE_BLAS=ON
+	-DTPL_ENABLE_LAPACK=ON
+	# -DTPL_ENABLE_MPI=ON
+)
+
+# "${CMAKE_SPECIFICS_OPENMPI[@]}" \
+cmake \
+	"${CMAKE_SPECIFICS_GCC[@]}" \
+	"${MODULES[@]}" \
+	"${MODULE_SPECIFIC_CONFIGURATION[@]}" \
+	"${THIRD_PARTY_LIBRARIES[@]}" \
+	"$SRCDIR"

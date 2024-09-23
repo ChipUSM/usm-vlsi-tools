@@ -7,6 +7,12 @@ ARG NGSPICE_REPO_URL="https://github.com/danchitnis/ngspice-sf-mirror"
 ARG NGSPICE_REPO_COMMIT="2af390f0b12ec460f29464d7325cf3ab5b02d98b"
 ARG NGSPICE_NAME="ngspice"
 
+ARG XYCE_REPO_URL="https://github.com/Xyce/Xyce.git"
+ARG XYCE_REPO_COMMIT="Release-7.8.0"
+ARG XYCE_TRILINOS_REPO_URL="https://github.com/trilinos/Trilinos"
+ARG XYCE_TRILINOS_REPO_COMMIT="trilinos-release-12-12-1"
+ARG XYCE_NAME="xyce"
+
 # Aug 16, 2024 (master)
 ARG OPEN_PDKS_REPO_URL="https://github.com/RTimothyEdwards/open_pdks"
 ARG OPEN_PDKS_REPO_COMMIT="0fe599b2afb6708d281543108caf8310912f54af"
@@ -225,6 +231,19 @@ ARG NGSPICE_REPO_URL \
 RUN --mount=type=bind,source=images/ngspice,target=/images/ngspice \
     bash /images/ngspice/install.sh
 
+#######################################################################
+# Compile xyce
+#######################################################################
+FROM builder as xyce
+
+ARG XYCE_REPO_URL \
+    XYCE_REPO_COMMIT \
+    XYCE_NAME \
+    XYCE_TRILINOS_REPO_URL \
+    XYCE_TRILINOS_REPO_COMMIT
+
+RUN --mount=type=bind,source=images/xyce,target=/images/xyce \
+    bash /images/xyce/install.sh
     
 #######################################################################
 # Compile klayout

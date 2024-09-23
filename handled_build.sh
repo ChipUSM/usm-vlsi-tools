@@ -10,6 +10,7 @@ make NO_PULL=Y STAGE=builder   build |& tee build_builder.log
 make NO_PULL=Y STAGE=magic     build |& tee build_magic.log
 make NO_PULL=Y STAGE=openvaf   build |& tee build_openvaf.log
 make NO_PULL=Y STAGE=ngspice   build |& tee build_ngspice.log
+make NO_PULL=Y STAGE=xyce      build |& tee build_xyce.log
 make NO_PULL=Y STAGE=xschem    build |& tee build_xschem.log
 make NO_PULL=Y STAGE=yosys     build |& tee build_yosys.log
 make NO_PULL=Y STAGE=netgen    build |& tee build_netgen.log
