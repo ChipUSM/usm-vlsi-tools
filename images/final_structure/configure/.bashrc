@@ -70,9 +70,22 @@ _path_add_tool_custom   "yosys/bin"
 # SET PDK PARAMETERS
 # ------------------
 
+# Compile OSDI file if it doesn't exists
+IHP_OPENVAF_DIR=$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/openvaf
+if [ ! -f "$IHP_OPENVAF_DIR/psp103_nqs.osdi" ]; then
+    echo "Compiling ihp-sg13g2 osdi files"
+    openvaf $IHP_OPENVAF_DIR/psp103_nqs.va --output /tmp/psp103_nqs.osdi
+
+    if [ $? -eq 0 ]; then
+        echo "Compilation succeded"
+        sudo mv /tmp/psp103_nqs.osdi $IHP_OPENVAF_DIR
+    else
+        echo "Compilation failed, reopen another terminal"
+    fi
+fi
+
 set_pdk () {
-    PDK=$1
-    case "$PDK" in
+    case "$1" in
     gf180mcuC) echo "gf180mcuC is not supported, only D variant" ;;
     gf180mcuD) export STD_CELL_LIBRARY=gf180mcu_fd_sc_mcu7t5v0 ;;
     sky130A)   export STD_CELL_LIBRARY=sky130_fd_sc_hd ;;
@@ -80,24 +93,9 @@ set_pdk () {
     *)         echo "PDK $PDK NOT RECOGNIZED" && return ;;
     esac
 
-    IHP_OPENVAF_DIR=$PDK_ROOT/ihp-sg13g2/libs.tech/ngspice/openvaf
-    if [ ! -f "$IHP_OPENVAF_DIR/psp103_nqs.osdi" ]; then
-        echo "Compiling ihp-sg13g2 osdi files"
-        openvaf $IHP_OPENVAF_DIR/psp103_nqs.va --output /tmp/psp103_nqs.osdi
-
-        if [ $? -eq 0 ]; then
-            echo "Compilation succeded"
-            sudo mv /tmp/psp103_nqs.osdi $IHP_OPENVAF_DIR
-        else
-            echo "Compilation failed, reopen another terminal"
-        fi
-    fi
-
-    export PDK=$PDK
+    export PDK=$1
     export PDKPATH=$PDK_ROOT/$PDK
-
     export SPICE_USERINIT_DIR=$PDK_ROOT/$PDK/libs.tech/ngspice
-
     export KLAYOUT_HOME=$PDK_ROOT/$PDK/libs.tech/klayout
     export KLAYOUT_PATH=$KLAYOUT_HOME:$(realpath $TOOLS/klayout/download)
 
@@ -105,6 +103,7 @@ set_pdk () {
     alias xschemtcl='xschem --rcfile $PDK_ROOT/$PDK/libs.tech/xschem/xschemrc'
     alias magic='magic -rcfile $PDK_ROOT/$PDK/libs.tech/magic/*.magicrc'
 
+    echo "PDK set to $PDK"
 }
 
 if [ "$PDK" == "" ]; then

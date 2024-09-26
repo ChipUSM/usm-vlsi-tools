@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 SRCDIR="/tmp/$XYCE_NAME/trilinos"
 ARCHDIR="/tmp/$XYCE_NAME/xycelibs/parallel"

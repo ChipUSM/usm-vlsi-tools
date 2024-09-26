@@ -18,7 +18,7 @@ git clone --depth=1 --branch "${XYCE_TRILINOS_REPO_COMMIT}" "${XYCE_TRILINOS_REP
 
 cd "/tmp/${XYCE_NAME}/trilinos"
 mkdir -p parallel_build && cd parallel_build
-cp /images/xyce/scripts/trilinos.reconfigure.sh ./reconfigure.sh
+cp /images/xyce/trilinos.reconfigure.sh ./reconfigure.sh
 chmod +x reconfigure.sh
 ./reconfigure.sh
 make -j"$(nproc)"
@@ -26,7 +26,7 @@ make install
 
 cd /tmp/"${XYCE_NAME}"
 mkdir -p parallel_build && cd parallel_build
-cp /images/xyce/scripts/xyce.reconfigure.sh ./reconfigure.sh
+cp /images/xyce/xyce.reconfigure.sh ./reconfigure.sh
 chmod +x reconfigure.sh
 ./reconfigure.sh
 make -j"$(nproc)"

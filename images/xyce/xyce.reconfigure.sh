@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # If enabling parallel execution
 USE_OPENMPI=(

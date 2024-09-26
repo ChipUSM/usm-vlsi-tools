@@ -53,6 +53,8 @@ apt -y install \
 	help2man \
 	language-pack-en-base \
 	lcov \
+	librsvg2-2 \
+	librsvg2-common \
 	libasound2-dev \
 	libblas-dev \
 	libbz2-dev \
@@ -178,3 +180,11 @@ update-alternatives --install /usr/bin/python python /usr/bin/python3 0
 rm -rf /tmp/*
 apt -y autoremove --purge
 apt -y clean
+
+pip install uv
+
+uv pip install --system --strict --compile-bytecode --no-cache \
+	"numpy<2" \
+	volare==0.18.1 \
+	docopt \
+	click

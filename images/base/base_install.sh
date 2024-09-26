@@ -9,38 +9,44 @@ sed -i -e "s/# $LC_ALL UTF-8/$LC_ALL UTF-8/" /etc/locale.gen
 dpkg-reconfigure --frontend=noninteractive locales
 update-locale LANG=$LANG
 
-BUILD_DEPS=(
+MINIMUM_DEPS=(
+	# Build
     binutils
 	build-essential
-	libpython3-dev
-	# patch
-	# patchutils
-	# automake
-	# autoconf
-	# pkg-config
-)
-
-UTILITY_DEPS=(
-	sudo
-	git
-	xterm
+	patch
 	make
 	gawk
-	tree
-	less
-	htop
-	parallel
+
+	# Libraries
+	librsvg2-2
+	librsvg2-common
+	libpython3-dev
 	openssl
+
+	# Usability
+	git
+	curl
+	wget
+	sudo
+	xterm
+	parallel
 	bzip2
 	zip
 	unzip
 	unrar
-	curl
-	wget
 	python3-pip
+)
+
+UTILITY_DEPS=(
+	# EDITORS
 	neovim
 	nano
 	gedit
+
+	# MISC
+	tree
+	less
+	htop
 	gtkwave
 )
 
@@ -98,7 +104,7 @@ ORFS_DEPS=(
 )
 
 DEPS=(
-	"${BUILD_DEPS[@]}"
+	"${MINIMUM_DEPS[@]}"
 	"${UTILITY_DEPS[@]}"
 	"${XSCHEM_DEPS[@]}"
 	"${MAGIC_DEPS[@]}"
