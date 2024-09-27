@@ -35,6 +35,7 @@ MINIMUM_DEPS=(
 	unzip
 	unrar
 	python3-pip
+	python3-tk
 )
 
 UTILITY_DEPS=(
