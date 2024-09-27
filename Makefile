@@ -52,11 +52,15 @@ USER_GROUP=$(shell id -g)
 
 # Linux Specific Configuration
 ##############################
-ifeq ($(UNAME_S),Linux)
+ifeq (Linux,$(UNAME_S))
+
+SHARED_DIR_HASH := $(shell echo -n $(SHARED_DIR) | md5sum | awk '{print $$1}')
+CONTAINER_NAME  := usm-vlsi-tools-$(SHARED_DIR_HASH)
+CONTAINER_ID    := $(shell docker container ls -a -q -f "name=$(CONTAINER_NAME)")
 
 # Since it uses local xserver, --net=host is required and DISPLAY should be equal to host
 
-DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
+DOCKER_RUN=docker run -it $(_DOCKER_ROOT_USER) \
 	--mount type=bind,source=$(SHARED_DIR),target=/home/designer/shared \
 	-v /tmp/.X11-unix:/tmp/.X11-unix:ro \
 	-v /home/$(USER)/.Xauthority:/root/.Xauthority:rw \
@@ -68,7 +72,8 @@ DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
 	-e XDG_RUNTIME_DIR \
 	-e PULSE_SERVER \
 	-e USER_ID=$(USER_ID) \
-	-e USER_GROUP=$(USER_GROUP)
+	-e USER_GROUP=$(USER_GROUP) \
+	--name $(CONTAINER_NAME)
 
 # _XSERVER_EXISTS and START_XSERVER are not required
 
@@ -76,7 +81,7 @@ endif
 
 # Mac Specific Configuration
 ############################
-ifeq ($(UNAME_S),Darwin)
+ifeq (Darwin,$(UNAME_S))
 
 DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
 	--mount type=bind,source=$(SHARED_DIR),target=/home/designer/shared \
