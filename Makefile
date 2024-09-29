@@ -8,7 +8,7 @@ DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:latest
 STAGE=usm-vlsi-tools
 else
 DOCKER_IMAGE_TAG=akilesalreadytaken/usm-vlsi-tools:dev
-STAGE=usm-vlsi-tools-dev
+STAGE=usm-vlsi-tools
 endif
 
 

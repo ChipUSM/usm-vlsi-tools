@@ -34,10 +34,10 @@ ARG OPENVAF_REPO_COMMIT="a9697ae7780518f021f9f64e819b3a57033bd39f"
 ARG OPENVAF_DOWNLOAD="https://openva.fra1.cdn.digitaloceanspaces.com/openvaf_23_5_0_linux_amd64.tar.gz"
 ARG OPENVAF_NAME="openvaf"
 
-# Feb 16, 2024 (v0.28.17)
+# 2024-09-22 (v0.29.7)
 ARG KLAYOUT_REPO_URL="https://github.com/KLayout/klayout"
-ARG KLAYOUT_REPO_COMMIT="v0.28.17"
-ARG KLAYOUT_DOWNLOAD="https://www.klayout.org/downloads/Ubuntu-22/klayout_0.28.17-1_amd64.deb"
+ARG KLAYOUT_REPO_COMMIT="v0.29.7"
+ARG KLAYOUT_DOWNLOAD="https://www.klayout.org/downloads/Ubuntu-22/klayout_0.29.7-1_amd64.deb"
 ARG KLAYOUT_NAME="klayout"
 
 # May 21, 2024 (master)

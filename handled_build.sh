@@ -55,10 +55,16 @@ clean_useless_information () {
 
     sed -i -r '/#[0-9]+ Consolidate compiler generated dependencies of target /d' $1
     sed -i -r '/#[0-9]+ -- Installing: /d' $1
+
+    # TODO: Add this filters
+    # (Reading database ... 25%
+    # #6 Selecting previously unselected package 
+    # #6 Preparing to unpack 
+    # #6 Unpacking 
 }
 
 build_and_filter_logs () {
-    make NO_PULL=Y STAGE=$1 build |& tee build_$1.log
+    make NO_PULL=Y STAGE=$1 build |& tee build_$1.log || true
     clean_useless_information build_$1.log
 }
 
@@ -69,12 +75,10 @@ build_and_filter_logs builder
 build_and_filter_logs magic
 build_and_filter_logs openvaf
 build_and_filter_logs ngspice
-build_and_filter_logs xyce
 build_and_filter_logs xschem
 build_and_filter_logs yosys
 build_and_filter_logs netgen
 build_and_filter_logs gaw
-build_and_filter_logs gtkwave
 build_and_filter_logs openroad
 build_and_filter_logs iverilog
 build_and_filter_logs cvc_rv
@@ -83,3 +87,6 @@ build_and_filter_logs orfs
 build_and_filter_logs open_pdks
 
 build_and_filter_logs ihp_pdk
+
+make NO_PULL=Y build |& tee build_all.log || true
+clean_useless_information build_all.log
