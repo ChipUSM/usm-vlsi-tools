@@ -34,6 +34,7 @@ DOCKER_RUN=docker run -it $(_DOCKER_ROOT_USER) \
 	--mount type=bind,source=$(SHARED_DIR),target=/home/designer/shared \
 	--user $(USER_ID):$(USER_GROUP) \
 	-e SHELL=/bin/bash \
+	-e PDK=$(PDK) \
 	-e DISPLAY=host.docker.internal:0 \
 	-e LIBGL_ALWAYS_INDIRECT=1 \
 	-e XDG_RUNTIME_DIR \
@@ -67,6 +68,7 @@ DOCKER_RUN=docker run -it $(_DOCKER_ROOT_USER) \
 	-v /home/$(USER)/.Xauthority:/home/designer/.Xauthority:rw \
 	--net=host \
 	-e SHELL=/bin/bash \
+	-e PDK=$(PDK) \
 	-e DISPLAY \
 	-e LIBGL_ALWAYS_INDIRECT=1 \
 	-e XDG_RUNTIME_DIR \
@@ -86,6 +88,7 @@ ifeq (Darwin,$(UNAME_S))
 DOCKER_RUN=docker run -it --rm $(_DOCKER_ROOT_USER) \
 	--mount type=bind,source=$(SHARED_DIR),target=/home/designer/shared \
 	-e SHELL=/bin/bash \
+	-e PDK=$(PDK) \
 	-e DISPLAY=host.docker.internal:0 \
 	-e LIBGL_ALWAYS_INDIRECT=1 \
 	-e XDG_RUNTIME_DIR \
