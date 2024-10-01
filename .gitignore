@@ -55,3 +55,4 @@ dkms.conf
 **/.ipynb_checkpoints
 *.log
 **/_build_logs
+*.raw
