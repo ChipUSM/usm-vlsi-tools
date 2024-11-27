@@ -12,5 +12,9 @@ function get-ubuntu-distro() {
 
 get-ubuntu-distro
 
+
+# See this https://deno.land/x/install@v0.3.2/install.ps1
+# On that script they update the variables
+
 [Environment]::SetEnvironmentVariable("WSL_DISTRO", "$WSL_DISTRO", "User")
 #[Environment]::SetEnvironmentVariable("WSL_DISTRO", "$WSL_DISTRO", "Machine")

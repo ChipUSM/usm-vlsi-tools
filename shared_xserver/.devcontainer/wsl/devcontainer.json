@@ -1,7 +1,6 @@
 {
-	"name": "chipathon2024-devcontainer",
+	"name": "usm-vlsi-tools for WSL",
 	"image": "akilesalreadytaken/usm-vlsi-tools:latest",
-	"features": {},
 	"customizations": {
 		"vscode": {
 			"extensions": [
@@ -10,7 +9,12 @@
 				"barakh.vscode-xschem-viewer",
 				"charliermarsh.ruff"
 			],
-			"settings": {}
+			"settings": {
+				"[python]": {
+					"editor.formatOnSave": true,
+					"editor.defaultFormatter": "charliemarsh.ruff"
+				}
+			}
 		}
 	},
 	"mounts": [
@@ -25,14 +29,14 @@
 			"type": "bind"
 		}
 	],
-	"updateRemoteUserUID": true,
 	"containerEnv": {
 		"SHELL": "/bin/bash",
+		"PDK": "sky130A",
 		"DISPLAY": ":0",
+		"LIBGL_ALWAYS_INDIRECT": "1",
 		"XDG_RUNTIME_DIR": "/mnt/wslg/runtime-dir",
 		"WAYLAND_DISPLAY": "wayland-0",
-		"PULSE_SERVER": "unix:/mnt/wslg/PulseServer",
-		"PDK": "sky130A"
-	},
-	"initializeCommand": "powershell -noprofile -nologo -ExecutionPolicy Bypass .devcontainer\\set-wsl-distro.ps1"
+		"PULSE_SERVER": "unix:/mnt/wslg/PulseServer"
+	}
+	// "initializeCommand": "powershell -noprofile -nologo -ExecutionPolicy Bypass .devcontainer\\set-wsl-distro.ps1"
 }

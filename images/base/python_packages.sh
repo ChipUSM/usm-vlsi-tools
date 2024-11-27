@@ -30,4 +30,5 @@ uv pip install --system --strict --compile-bytecode --no-cache \
     pygmid \
     kfactory \
     ruff \
-    click
+    click \
+    xdot
